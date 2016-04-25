@@ -1,0 +1,18 @@
+; exemplo da HP-xxx
+input eq 0
+input prech 1
+input pmotin 0
+input wenin 0
+input wsldin 0
+output  ack 0
+output pmot 0
+output wen 0
+output wsen 1
+output wsld 0
+0 1 eq+  |  pmot+ 
+1 2  pmotin+ |   wen+
+2 3 prech- wenin+  |  ack+ 
+3 4 eq- |   wen- wsen- 
+4 5 wenin- |   pmot-  wsld+
+5 6 prech* pmotin-  wsldin+ | wsld-  
+6 0 prech+ wsldin- |  ack- wsen+

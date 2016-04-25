@@ -1,0 +1,26 @@
+; Exemplo: rf-control 
+input RFFrameReq 0
+input SOFEventoK 0
+input EOFEventoK 0
+input CtrEoTSAck 0
+input SCEoTSAck 0
+input HIFCommitAck 0
+output ControlResetAck 1
+output RFFrameAck 0
+output IntSDReq 0
+output SCEoTSReq 0
+output HIFCommitReq 0 
+0 1 RFFrameReq+ | IntSDReq+ ControlResetAck-
+1 2 SOFEventoK+ | IntSDReq- 
+2 3 SOFEventoK- | IntSDReq+
+3 4 EOFEventoK+ | HIFCommitReq+ IntSDReq- 
+4 5 EOFEventoK- HIFCommitAck+ | HIFCommitReq- SCEoTSReq+
+5 6 SCEoTSAck+ HIFCommitAck- | SCEoTSReq-   
+6 7 SCEoTSAck- | RFFrameAck+
+7 8 RFFrameReq- | RFFrameAck-  
+8 1 RFFrameReq+ | IntSDReq+
+3 9 CtrEoTSAck+ | IntSDReq-   
+9 10 CtrEoTSAck- | SCEoTSReq+
+10 11 SCEoTSAck+ | SCEoTSReq- 
+11 3 SCEoTSAck-  | IntSDReq+
+

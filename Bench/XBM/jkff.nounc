@@ -1,0 +1,18 @@
+input	clk                      0
+input	J                        0
+input	K                        0
+output	Q                        0
+
+0  1	[J-] [K-] clk+           |  
+0  2	[J+] [K-] clk+           |  Q+ 
+0  3	[J-] [K+] clk+           |  
+0  4	[J+] [K+] clk+           |  Q+ 
+4  5	clk-                     |  
+3  0	clk-                     |  
+2  5	clk-                     |  
+1  0	clk-                     |  
+5  2	[J-] [K-] clk+           |  
+5  4	[J+] [K-] clk+           |  
+5  1	[J+] [K+] clk+           |  Q- 
+5  3	[J-] [K+] clk+           |  Q- 
+

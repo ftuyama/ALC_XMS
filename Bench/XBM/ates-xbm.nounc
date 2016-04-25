@@ -1,0 +1,31 @@
+input	a                        0
+input	b                        0
+input	c                        0
+input	d                        0
+input	e                        0
+output	x                        0
+output	y                        0
+output	z                        0
+
+0  1	a+ b+                    | x+ y+ 
+0  8	a+ c+                    | x+ y+ 
+1  9	c+                       |  
+8  9	b+                       |  
+1  2	d+                       | y- z+ 
+8  10	d+                       | y- z+  
+9  11	d+                       | y- z+ 
+2  3	[e+] a-                  |  z- 
+10  12	[e+] a- b+               |  z- 
+11  13	[e+] a-                  |  z- 
+3  4	d-                       | z+  
+12  14	d-                       | z+  
+13  14	d-                       | z+  
+4  1	a+                       | z- y+ 
+14  9	a+                       | z- y+  
+2  5	[e-] c+ a-               |  y+ 
+10  5	[e-] a- b+               |  y+ 
+11  5	[e-] a-                  |  y+ 
+5  6	a+ b-                    | z- 
+6  7	d-                       | y- 
+7  0	a- c-                    | x-  
+

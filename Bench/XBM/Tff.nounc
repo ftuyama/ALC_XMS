@@ -1,0 +1,11 @@
+; exemplo em XBM do flip-flop T
+input clk       0
+input T         0   
+output Q        0
+
+0 1 [T-] clk+ | 
+0 2 [T+] clk+ | Q+
+2 3 clk-     |
+1 0 clk-     |
+3 1 [T+] clk+ | Q-
+3 2 [T-] clk+ | 

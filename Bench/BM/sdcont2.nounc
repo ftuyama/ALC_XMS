@@ -1,0 +1,54 @@
+input	SDEventReq               0
+input	EoSPAck                  0
+input	DatAck                   0
+input	SOF1Ack                  0
+input	SOF2Ack                  0
+input	EOF1Ack                  0
+input	EOF2Ack                  0
+input	EOF3Ack                  0
+output	SDEventSOF               0
+output	SDEventEOF               0
+output	SDEventData              0
+output	SCEventReq               0
+output	EoSPReq                  0
+output	DataReq                  1
+output	SOF1Req                  0
+output	SOF2Req                  0
+output	EOF1Req                  1
+output	EOF2Req                  0
+output	EOF3Req                  0
+output	SDResetAck               1
+
+0  4	SDEventReq+              | SCEventReq+ EoSPReq+ SDResetAck- 
+4  5	EoSPAck+                 | SCEventReq-  
+5  6	EoSPAck-                 | SCEventReq+ EoSPReq- DataReq- SOF1Req+ EOF1Req- 
+6  7	SOF1Ack+                 | SCEventReq-  
+7  8	SOF1Ack-                 | SCEventReq+ SOF1Req- SOF2Req+ 
+8  9	SOF2Ack+                 | SCEventReq-  
+9  10	SOF2Ack-                 | SCEventReq+ EoSPReq+ SOF2Req- 
+10  11	EoSPAck+                 | SCEventReq-  
+11  12	EoSPAck-                 | SDEventSOF+ EoSPReq- 
+12  3	SDEventReq-              | SDEventSOF-  
+4  13	EOF1Ack+                 | SCEventReq-  
+13  14	EOF1Ack-                 | SCEventReq+ EOF2Req+ DataReq- EOF1Req- 
+14  15	EOF2Ack+                 | SCEventReq-  
+15  16	EOF2Ack-                 | SCEventReq+ EoSPReq- EOF2Req- EOF3Req+ 
+16  17	EOF3Ack+                 | SCEventReq-  
+17  18	EOF3Ack-                 | SCEventReq+ EoSPReq+ EOF3Req- 
+18  19	EoSPAck+                 | SCEventReq-  
+19  25	EoSPAck-                 | SDEventEOF+ EoSPReq- 
+25  26	SDEventReq-              | SDEventEOF-  
+14  20	EoSPAck+                 | SCEventReq-  
+20  24	EoSPAck-                 | SDEventData+ EoSPReq- EOF2Req- 
+4  21	DatAck+                  | SCEventReq-  
+21  22	DatAck-                  | SCEventReq+ DataReq- EOF1Req- 
+22  23	EoSPAck+                 | SCEventReq-  
+23  24	EoSPAck-                 | SDEventData+ EoSPReq- 
+24  3	SDEventReq-              | SDEventData-  
+3  4	SDEventReq+              | SCEventReq+ EoSPReq+ DataReq+ EOF1Req+ 
+26  4	SDEventReq+              | SCEventReq+ EoSPReq+ DataReq+ EOF1Req+ 
+4  1	SOF1Ack+                 | SCEventReq- 
+1  4	SOF1Ack-                 | SCEventReq+ 
+4  2	SOF2Ack+                 | SCEventReq- 
+2  4	SOF2Ack-                 | SCEventReq+ 
+

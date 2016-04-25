@@ -1,0 +1,11 @@
+input	clk                      0
+input	D                        0
+output	Q                        0
+
+0  1	[D-] clk+                |  
+0  2	[D+] clk+                |  Q+ 
+2  3	clk-                     |  
+1  0	clk-                     |  
+3  2	[D+] clk+                |  
+3  1	[D-] clk+                |  Q- 
+
