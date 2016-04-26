@@ -1,0 +1,23 @@
+; exemplo do artigo Call-Procedure macromodulo
+input as 0
+input r1 0
+input r2 0
+output rs 0
+output a1 0
+output a2 0
+0 1 r2+ | rs+
+1 2 as+ | a2+
+2 3 r1+ | rs-
+3 4 as- | a1+
+4 5 r1- | rs+
+5 2 as+ | a1-
+2 6 r2- | rs-
+6 0 as- | a2-
+4 7 r2- | rs+
+7 8 as+ | a2-
+8 9 r1- | rs-
+9 0 as- | a1-
+0 10 r1+ | rs+
+10 8 as+ | a1+
+8 11 r2+ | rs-
+11 4 as- | a2+ 

@@ -1,0 +1,12 @@
+; exmplo do Ta-man-chu chu150
+input Ao 1
+input Ri 0
+input D 1
+output Ro 1 
+output Ai 1
+output L 1
+0 1 D- | Ro- L-
+1 2 Ao- | Ai-
+2 3 Ri+ | L+
+3 4 D+ | Ro+ L-
+4 0 Ao+ Ri- | Ai+ L+

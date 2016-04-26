@@ -1,0 +1,23 @@
+input	xsend                    0
+input	TReq                     0
+input	yIQ                      0
+input	ADBIdout                 0
+input	AckPkt                   0
+output	TAck                     0
+output	PEAck                    0
+output	ADBId                    0
+
+0  1	xsend+ TReq+ yIQ+        | ADBId+ 
+1  2	ADBIdout+                | PEAck+ 
+2  3	yIQ-                     | PEAck- ADBId- TAck+ 
+3  4	TReq- yIQ+ ADBIdout-     | ADBId+ 
+3  8	TReq- AckPkt+ ADBIdout-  | PEAck+  
+4  5	ADBIdout+                | PEAck+  
+5  6	yIQ-                     | PEAck- ADBId- TAck- 
+6  1	TReq+ yIQ+ ADBIdout-     | ADBId+  
+6  7	TReq+ AckPkt+ ADBIdout-  | PEAck+ TAck+  
+7  9	AckPkt- TReq-            | PEAck- TAck- 
+8  9	AckPkt-                  | PEAck- TAck-  
+9  0	xsend-                   | 
+9  10	TReq+                    | TAck+ 
+10  9	TReq-                    | TAck- 

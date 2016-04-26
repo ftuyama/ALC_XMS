@@ -1,0 +1,26 @@
+# FSM Reduction and mapping (C) Univ. of Colorado VLSI
+#
+# JEDI, official release 1.2
+#
+# States.S0 11
+# States.S1 01
+# States.S2 10
+#
+.type fdr
+.i 6
+.o 4
+.ilb v.0 v.1 v.2 v.3 v.4.0 v.4.1 
+.ob v.5.0 v.5.1 v.6 v.7 
+-00011 0100
+-00001 0100
+-10011 1100
+-10001 0101
+-10111 1100
+-10101 1100
+-11011 1010
+-11111 1100
+110010 0101
+010010 1100
+-11010 1010
+----00 ----
+.e

@@ -1,0 +1,17 @@
+input	req                      0
+input	ackbus                   0
+input	nakbus                   0
+input	ackctl                   0
+output	ack                      0
+output	reqbus                   0
+output	busctl                   0
+
+0  1	req+                     | busctl+ 
+1  2	ackctl+                  | reqbus+  
+2  5	ackctl-                  | reqbus-  
+5  6	ackctl+                  | busctl-  
+6  1	ackctl-                  | busctl+  
+2  3	ackbus+                  | reqbus-  
+3  4	ackbus-                  | busctl- 
+4  7	ackctl-                  | ack+  
+7  0	req-                     | ack-  

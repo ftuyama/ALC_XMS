@@ -1,0 +1,11 @@
+;M.S.A. do exemplo: Chu133
+input  LA 0      
+input  DA 0       
+input  ZA 0      
+output   LR 1
+output   DR 0
+output   ZR 0
+0 1 LA+ DA*  |   LR- DR+
+1 2 LA- DA+  |   ZR+
+2 3 ZA+      |   DR- ZR- 
+3  0 DA- ZA- |   LR+ 

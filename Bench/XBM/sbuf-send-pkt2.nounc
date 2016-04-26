@@ -1,0 +1,11 @@
+input	req                      0
+input	done                     0
+input	ackline                  0
+output	ack                      0
+output	sendiline                0
+
+0  1	req+                     | sendiline+ 
+1  2	[done+] ackline+         | sendiline- ack+ 
+2  0	req- ackline-            | ack- 
+1  3	[done-] ackline+         | sendiline-  
+3  1	ackline-                 | sendiline+  

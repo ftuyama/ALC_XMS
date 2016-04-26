@@ -1,0 +1,25 @@
+input	ackin                    0
+input	dack                     0
+input	done                     0
+input	dtc                      0
+input	empty                    0
+input	startdmasend             0
+output	dreq                     0
+output	enddmaint                1
+output	ready                    0
+output	reqout                   0
+
+0  4	startdmasend+            | enddmaint-  
+4  5	startdmasend-            | dreq+ 
+5  6	dack+                    | ready+ 
+6  11	[done+] dtc+             | ready- dreq- 
+11  12	dack- dtc-               | reqout+ 
+12  13	ackin+                   | reqout-  
+13  12	[empty-] ackin-          | reqout+ 
+13  0	[empty+] ackin-          |  enddmaint+ 
+6  7	[done-] dtc+             |  ready- 
+7  8	dack- dtc-               | reqout+ 
+8  9	dack* ackin+             | reqout- 
+9  6	[empty+] dack+ ackin-    |  ready+ 
+9  10	[empty-] dack* ackin-    | reqout+ 
+10  9	dack* ackin+             | reqout-  

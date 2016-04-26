@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "******************************"
+echo "*                            *"
+echo "*      Massive Tester        *"
+echo "*                            *"
+echo "******************************"
+rm \logTest.txt
+touch logTest.txt
+find Teste -name "*.nounc" -exec ./Teste.sh '{}' \;

@@ -1,0 +1,70 @@
+input	SCEventReq               0
+input	SCEoTSReq                0
+input	IT12ResetAck             1
+input	IT12CalStart             0
+input	IT12CalAck               0
+input	IT1EventStart            0
+input	IT1EventStop             0
+input	IT2EventStop             0
+input	CtrEoSPAck               0
+input	CtrTcbeAck               0
+input	CtrSet00XXAck            0
+input	CtrSet0011Ack            1
+input	TSTimeout                0
+output	SCEventCount             0
+output	SCEventEoSP              0
+output	SCEoTSAck                0
+output	SCError                  0
+output	IT12SoftResetReq         1
+output	IT12CalReq               0
+output	IT1IntReq                0
+output	IT2IntReq                0
+output	CtrSet00XXReq            0
+output	CtrSet0011Req            1
+output	AwaitingTS               0
+output	ComeOnBlock              1
+output	RXReceiving              0
+output	ControlResetAck          1
+
+0  1	SCEventReq+              | IT12SoftResetReq- CtrSet0011Req- 
+1  2	IT12ResetAck- CtrSet0011Ack- | ControlResetAck- ComeOnBlock- IT12CalReq+ 
+2  3	IT12CalStart+            | RXReceiving+ 
+3  4	IT12CalAck+              | IT12CalReq- 
+4  5	IT12CalStart- IT12CalAck- | IT1IntReq+ AwaitingTS+ 
+5  6	TSTimeout+               | RXReceiving- SCError+ 
+5  29	IT1EventStart+           | IT2IntReq+ AwaitingTS-  
+29  30	CtrEoSPAck+              | IT1IntReq-  
+30  7	CtrEoSPAck-              | IT1IntReq+  
+7  8	CtrEoSPAck+              | IT1IntReq- SCEventEoSP+ zzz00- 
+8  9	CtrEoSPAck- SCEventReq-  | SCEventEoSP-  
+9  7	SCEventReq+              | IT1IntReq+ 
+7  10	IT1EventStop+            | IT1IntReq- SCEventCount+  
+29  10	IT1EventStop+            | IT1IntReq- SCEventCount+ 
+10  11	IT1EventStop- SCEventReq- | SCEventCount-  
+11  12	SCEventReq+              | CtrSet00XXReq+  
+12  31	CtrSet00XXAck+           | CtrSet00XXReq-  
+31  13	CtrSet00XXAck-           | IT1IntReq+ 
+13  14	CtrEoSPAck+              | IT2IntReq- SCEventEoSP+ 
+14  15	CtrEoSPAck- SCEventReq-  | SCEventEoSP- 
+15  13	SCEventReq+              | IT2IntReq+ 
+13  16	IT2EventStop+            | IT2IntReq- SCEventCount+ 
+16  17	IT2EventStop- SCEventReq- | SCEventCount-  
+17  18	SCEventReq+              | CtrSet00XXReq+ 
+18  32	CtrSet00XXAck+           | CtrSet00XXReq-  
+32  7	CtrSet00XXAck-           | IT2IntReq+ 
+9  19	SCEoTSReq+               | IT1IntReq+ ComeOnBlock+  
+19  20	IT1EventStop+            | RXReceiving- SCError+ 
+19  21	CtrTcbeAck+              | IT1IntReq- SCEoTSAck+ 
+21  25	CtrTcbeAck- SCEoTSReq-   | IT2IntReq- IT12SoftResetReq+ CtrSet0011Req+ SCEoTSAck- 
+15  22	SCEoTSReq+               | IT2IntReq+ ComeOnBlock+ 
+22  23	IT2EventStop+            | RXReceiving- SCError+ 
+22  24	CtrTcbeAck+              | IT2IntReq- SCEoTSAck+ 
+24  25	CtrTcbeAck- SCEoTSReq-   | IT1IntReq- IT12SoftResetReq+ CtrSet0011Req+ SCEoTSAck-  
+25  26	IT12ResetAck+ IT1EventStart- CtrSet0011Ack+ SCEventReq+ | IT12SoftResetReq- CtrSet0011Req-  
+26  27	IT12ResetAck- CtrSet0011Ack- | ComeOnBlock- IT12CalReq+ AwaitingTS+ 
+27  28	TSTimeout+               | RXReceiving- SCError+ 
+27  3	IT12CalStart+            | AwaitingTS-  
+6  1	TSTimeout- IT12ResetAck+ CtrSet0011Ack+ | SCError- ComeOnBlock+ ControlResetAck+ IT1IntReq- AwaitingTS- 
+20  1	SCEventReq+ IT12ResetAck+ CtrSet0011Ack+ SCEoTSReq- IT1EventStart- IT1EventStop- | SCError- IT1IntReq- IT2IntReq- ControlResetAck+ 
+23  1	SCEventReq+ SCEoTSReq- IT12ResetAck+ IT1EventStart- IT2EventStop- CtrSet0011Ack+ | SCError- IT1IntReq- IT2IntReq- ControlResetAck+ 
+28  1	IT12ResetAck+ CtrSet0011Ack+ TSTimeout- | SCError- IT12CalReq- AwaitingTS- ComeOnBlock+ ControlResetAck+ 

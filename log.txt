@@ -1,0 +1,6 @@
+scsi-init-send-1.nounc
+Num_StateMin: 3
+Num_Dependen: 0
+Num_Produtos: 10
+Num_Literais: 17
+------------------

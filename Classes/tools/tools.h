@@ -13,7 +13,7 @@
 #define MAX 400
 typedef enum { false, true } bool;
 void checkFile(FILE *file, char *name);
-void writeLog (char *log, int Nminstates, int Ndependencias);
+void writeLog (char *file, char *name, int Nminstates, int Ndependencias, int Nprodutos, int Nliterais);
 void exception(int lin, char* aux);
 int nextNumber(int lin, char* aux);
 int not(int x);

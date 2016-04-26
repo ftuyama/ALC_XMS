@@ -252,6 +252,6 @@ void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file)
 	cropExtension(Vhdl_file);
 	parseBlif(BLIF_IN);
 	parseKiss(KISS_IN);
-
-	constructMasterVHDL(VHDL_OUT);
+		
+	constructMasterVHDL(VHDL_OUT); 
 }

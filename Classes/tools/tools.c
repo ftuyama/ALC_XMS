@@ -66,10 +66,15 @@ char* copia(char *aux)
 		obj[x]='\0';
 	return obj;
 }
-void writeLog (char *file, int Nminstates, int Ndependencias)
+
+void writeLog (char *file, char *name, int Nminstates, int Ndependencias, int Nprodutos, int Nliterais)
 {
 	FILE *output = fopen(file, "w");
-	fprintf(output, "%d\n", Nminstates);
-	fprintf(output, "%d\n", Ndependencias);
+	fprintf(output, "%s\n", name);
+	fprintf(output, "Num_StateMin: %d\n", Nminstates);
+	fprintf(output, "Num_Dependen: %d\n", Ndependencias);
+	fprintf(output, "Num_Produtos: %d\n", Nprodutos);
+	fprintf(output, "Num_Literais: %d\n", Nliterais);
+	fprintf(output, "------------------\n");
 	fclose(output);
 }

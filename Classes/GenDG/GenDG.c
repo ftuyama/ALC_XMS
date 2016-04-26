@@ -116,22 +116,71 @@ void addTrans()
 	for (pt = sttData[Ndest].prox; pt->prox!=NULL; pt=pt->prox);
 	pt->prox = newInl;
 }
-// Determina o número de estados do arquivo .kiss
-int analyseStatesKiss(char *Kiss_file)
+
+// Determina o número de produtos e literais de um arquivo Blif
+void analyseBlif(char *Blif_file, int *Nprodutos, int *Nliterais)
 {
-	char linha[MAX];
+	int logicBegin, *isSet, Noutput, Nblank, Nlines, j;
+	j = Nblank = Noutput = *Nliterais = *Nprodutos = 0;
+	
+	FILE *input = fopen (Blif_file, "r");
+	while (!(aux[0] == '.' && aux[1] == 'p'))
+		fgets(aux , MAX , input);
+	fgets(aux , MAX , input);
+	logicBegin = ftell(input);
+	
+	while (aux[++j] != ' ');
+	Noutput = (strlen(aux) - j); Nblank = j; 
+	isSet = (int*)malloc(Noutput*sizeof(int));
+	for (int i = 0; i < Noutput; i++)
+		isSet[i] = 0;
+		
+	while(Nlines == 0 && !(aux[0] == '.' && aux[1] == 'e'))
+	{
+		j = 0;
+		while (aux[++j] != ' ');
+		while(j++ < strlen(aux))
+			if (aux[j] == '0') 
+				Nlines = 1;
+		if (Nlines == 0)
+			*Nprodutos = *Nprodutos + 1;
+		fgets(aux , MAX , input);
+	}
+	
+	Nlines = *Nprodutos;
+	fseek(input, logicBegin, SEEK_SET );
+	for (int i = 0; i<Nlines; i++)
+	{
+		j = 0;
+		while(aux[j] != ' ')
+			if (aux[j++] != '-')
+				*Nliterais = *Nliterais + 1;
+		while(j++ < strlen(aux)) 
+			if (aux[j] == '1')
+				if (isSet[j - Nblank]++ == 1)
+					*Nprodutos = *Nprodutos + 1;
+		fgets(aux , MAX , input);
+	}
+	fclose(input);
+	free(isSet);
+}
+
+// Determina o número de estados do arquivo .kiss
+void analyseStatesKiss(char *Kiss_file, int *Nminstates)
+{
 	FILE *input = fopen (Kiss_file, "r");
 	checkFile(input, Kiss_file);
 	while (!feof(input))
 	{
-		fgets(linha , MAX , input);
-		if (linha[0] == '.' && linha[1] == 's')
+		fgets(aux , MAX , input);
+		if (aux[0] == '.' && aux[1] == 's')
 		{
 			fclose(input);
-			return nextNumber(0,linha); 
+			*Nminstates = nextNumber(0,aux); 
+			return;
 		}
 	}
-	return -1;
+	fclose(input);
 }
 // Realiza a leitura do formato .kiss
 void readKiss(FILE *input)
@@ -162,12 +211,12 @@ void readKiss(FILE *input)
 //*     Núcleo da Análise do GD      */
 //*     					         */
 //************************************/
-int analyseGD(char *Kiss_file, bool show)
+void analyseGD(char *Kiss_file, bool show, int *Ndependencias)
 {
 	FILE *input = fopen (Kiss_file, "r");
 	checkFile(input, Kiss_file);
 	inicializa2();
 	readKiss(input);
 	if (show == true) showTransitions();
-	return countDependency(show);
+	*Ndependencias = countDependency(show);
 }

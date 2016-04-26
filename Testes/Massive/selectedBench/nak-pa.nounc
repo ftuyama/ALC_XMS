@@ -1,0 +1,16 @@
+input	req                      0
+input	ackbus                   0
+input	ackhyst                  0
+input	busack                   0
+output	ack                      0
+output	reqbus                   0
+output	hystreq                  0
+output	end                      0
+output	busreq                   0
+
+0  1	req+                     | reqbus+ 
+1  2	ackbus+                  | hystreq+ end+ 
+2  3	ackhyst+                 | busreq+ 
+3  4	busack+                  | busreq- 
+4  5	busack-                  | ack+ reqbus- hystreq- end- 
+5  0	req- ackbus- ackhyst-    | ack-  

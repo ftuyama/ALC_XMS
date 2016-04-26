@@ -1,8 +1,8 @@
 //**************************************************/
-//*                  ALC XMS					   		*/
+//*                  ALC XMS					   */
 //*   Automatic Local-Clock XBM MEF Synthesis	   */
-//*    	Entrada: arquivo .nounc                   */
-//*    	Saida  : arquivo .vhdl                    */
+//*    	Entrada: arquivo .nounc                    */
+//*    	Saida  : arquivo .vhdl                     */
 //*                                                */
 //*  Autor: Felipe Tuyama                          */
 //**************************************************/
@@ -14,18 +14,28 @@
 #include "Classes/GenFunc/GenFunc.h"
 #include "Classes/GenVHDL/GenVHDL.h"
 #include "Classes/tools/tools.h"
-int Nminstates, Ndependencias;
+int Nminstates, Ndependencias, Nprodutos, Nliterais;
 char fileName[MAX], name[MAX];
 bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
 
-void getFileName(char* name)
+void getFilePath(char* name)
 {
 	int i = -1;
 	while(name[++i] != '.')
 		fileName[i] = name[i];
 	fileName[i] = '\0';
+}
+
+void getFileName()
+{
+	int i = strlen(name), j = 0;
+	while(name[--i] != '/' && i !=0);
+	if (i == 0) i--;
+	while(name[i] != '.')
+		fileName[j++] = name[++i];
+	fileName[--j] = '\0';
 }
 
 void fileNameDot(char* path, char* extension)
@@ -51,8 +61,8 @@ int main(int arc, char** argv)
 	//*  Interpretação do Comando de ALC XMS  */
 	//*****************************************/
 	
-	if (arc > 1) getFileName(argv[1]);
-	else getFileName("scsi-init-send-1.nounc");
+	if (arc > 1) getFilePath(argv[1]);
+	else getFilePath("scsi-init-send-1.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	printf ("%sFileName[%s]%s\n", KRED, fileName, KYEL);
@@ -82,7 +92,7 @@ int main(int arc, char** argv)
 	if (showStamina == true)
 		system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
 	else system("stamina -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
-	Nminstates = analyseStatesKiss("ALC_XMS/kiss2/arquivo_min.kiss2");
+	analyseStatesKiss("ALC_XMS/kiss2/arquivo_min.kiss2", &Nminstates);
 	printf ("> Nº Estados minimizados: %d\n", Nminstates);
 
 	
@@ -93,7 +103,7 @@ int main(int arc, char** argv)
 	// Faz análise do Grafo de Dependências
 	
 	printf("%s$ Análise do Grafo de Dependência.%s\n", KYEL, KWHT);
-	Ndependencias = analyseGD("ALC_XMS/kiss2/arquivo_min.kiss2", showDG);
+	analyseGD("ALC_XMS/kiss2/arquivo_min.kiss2", showDG, &Ndependencias);
 	printf("> Dependências detectadas: %d\n", Ndependencias);
 	printf(KMAG);
 	
@@ -130,22 +140,30 @@ int main(int arc, char** argv)
 	system("espresso -o fr ALC_XMS/blif/FGC.blif >ALC_XMS/blif/FGC_min.blif");
 	system("espresso -o fr ALC_XMS/blif/OUT.blif >ALC_XMS/blif/OUT_min.blif");
 	system("espresso -o fr ALC_XMS/blif/NSTATE.blif >ALC_XMS/blif/NSTATE_min.blif");
+	analyseBlif("ALC_XMS/blif/arquivo_min.blif", &Nprodutos, &Nliterais);
 	
 	//*****************************************/
 	//*          Conversão para VHDL          */
 	//*****************************************/
 	// Conversão das Eq. Booleanas para VHDL
 	// Input: Eq. Booleanas @ Output: Códigos VHDL
-	
-	printf("%s$ Conversão para VHDL.%s", KYEL, KWHT);
+
+	printf("%s$ Conversão para VHDL.%s\n", KYEL, KWHT);
 	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
 	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch.vhdl");
-	
+
+	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
 	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name);
+
+	//*****************************************/
+	//*          Generate Log File            */
+	//*****************************************/
+	// Cria um arquivo Log com os resultados obtidos
+	fileNameDot("", ".nounc");
+	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais);
 	
-	writeLog("ALC_XMS/log/log.txt", Nminstates, Ndependencias);
 	return 0;
 }

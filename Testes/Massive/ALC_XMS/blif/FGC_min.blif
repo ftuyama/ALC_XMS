@@ -1,0 +1,22 @@
+#
+# JEDI, official release 1.2
+#
+# States.s0 111
+# States.s2 101
+# States.s4 100
+# States.s6 110
+#
+.3.1 v.3.2 v.4 v.5 
+.type fr
+.i 5
+.o 1
+.ilb v.0 v.1 v.2.0 v.2.1 v.2.2
+.ob v.3.0
+.p 6
+-0-0- 1
+-1-1- 1
+-0111 0
+-1101 0
+-1100 0
+-0110 0
+.end

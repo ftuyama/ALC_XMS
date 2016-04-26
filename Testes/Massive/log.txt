@@ -1,0 +1,6 @@
+select2p.nounc
+Num_StateMin: 7
+Num_Dependen: 8
+Num_Produtos: 17
+Num_Literais: 40
+------------------

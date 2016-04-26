@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.NUMERIC_STD.all;
 
-ENTITY scsi_init_send_1 IS
+ENTITY biu_fifo2dma IS
   PORT (
     INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
     OUTPUT : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -12,9 +12,9 @@ ENTITY scsi_init_send_1 IS
     IN_DELAY  : IN  STD_LOGIC;
     OUT_DELAY : OUT STD_LOGIC
   );
-END ENTITY scsi_init_send_1;
+END ENTITY biu_fifo2dma;
 
-ARCHITECTURE ALC_XMS OF scsi_init_send_1 IS
+ARCHITECTURE ALC_XMS OF biu_fifo2dma IS
 
 COMPONENT FGC_Block IS
   PORT (
