@@ -1,6 +1,6 @@
-scsi-init-send-1.nounc
-Num_StateMin: 3
-Num_Dependen: 0
-Num_Produtos: 10
-Num_Literais: 17
+pe-rcv-ifc.nounc
+Num_StateMin: 7
+Num_Dependen: 26
+Num_Produtos: 27
+Num_Literais: 72
 ------------------

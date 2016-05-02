@@ -60,7 +60,7 @@ int main(int arc, char** argv)
 	//*****************************************/
 	//*  Interpretação do Comando de ALC XMS  */
 	//*****************************************/
-	
+	showDG = true;
 	if (arc > 1) getFilePath(argv[1]);
 	else getFilePath("scsi-init-send-1.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;

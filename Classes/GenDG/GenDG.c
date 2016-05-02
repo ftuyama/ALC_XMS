@@ -12,6 +12,11 @@ typedef struct inl {
 	struct inl *prox;
 } Inl;
 Inl *sttData;
+typedef struct aresta {
+	int orig, dest, depe;
+	struct aresta *prox;
+} Aresta;
+Aresta *arestas;
 
 //************************************/
 //*    Inicialização da estrutura    */
@@ -21,32 +26,81 @@ void inicializa2()
 {
 	Sinput = (char*)malloc(Ninput*sizeof(char));
 	sttData = (Inl*)malloc(Nstate*sizeof(Inl));
+	arestas = (Aresta*)malloc(Nstate*sizeof(Aresta));
+	arestas->prox = NULL;
 	for (int j = 0; j<Nstate; j++)
 		sttData->prox = NULL;
+}
+//************************************/
+//*      Imprimindo o Grafo          */
+//*        de Dependências           */
+//************************************/
+//* A impressão pode ser feita usando GraphViz
+//*  http://graphs.grevian.org/graph/6175947048878080
+//************************************/
+// Imprime uma nova transição, se não houver dependência
+void printTransition(int orig, int dest)
+{
+	for (Aresta *ar = arestas->prox; ar != NULL; ar = ar->prox)
+		if (ar->orig == orig && ar->dest == dest)
+			return;
+			
+	Aresta *newAresta = (Aresta*)malloc(Nstate*sizeof(Aresta));
+	newAresta->orig = orig;	newAresta->dest = dest;
+	newAresta->prox = NULL;
+	for (Aresta *ar = arestas; ar != NULL; ar = ar->prox)
+		if (ar->prox == NULL) {
+			ar->prox = newAresta;
+			break;
+		}
+			
+	printf("%d->%d\n", orig, dest);
+}
+// Imprime uma nova dependência, se não for repetida
+void printDependencia(int orig, int dest, int depe)
+{
+	for (Aresta *ar = arestas->prox; ar != NULL; ar = ar->prox)
+		if (ar->orig == orig && ar->dest == dest && ar->depe == depe)
+			return;
+			
+	Aresta *newAresta = (Aresta*)malloc(Nstate*sizeof(Aresta));
+	newAresta->orig = orig;	newAresta->dest = dest;
+	newAresta->depe = depe;	newAresta->prox = NULL;
+	for (Aresta *ar = arestas; ar != NULL; ar = ar->prox)
+		if (ar->prox == NULL) {
+			ar->prox = newAresta;
+			break;
+		}
+			
+	printf("%s%d->%d [ label = \"%d\" ];%s\n", KRED, orig, dest, depe, KWHT);
 }
 //************************************/
 //*        Análise do Grafo          */
 //*     	de Dependência       	 */
 //************************************/
 // Mostra o DG construído a partir da leitura
-void showTransitions()
+void showTransitions(bool show)
 {
-	for (int j = 0; j < Nstate; j++)
-		for (Inl *ptx = sttData[j].prox; ptx!=NULL; ptx = ptx->prox)
-			printf ("%d: (%d->%d) %s \n", j, ptx->Norig, j, ptx->in);
+	if (show == true)
+		for (int j = 0; j < Nstate; j++)
+			for (Inl *ptx = sttData[j].prox; ptx!=NULL; ptx = ptx->prox)
+				printTransition(ptx->Norig, j);
+
+	//printf ("%d->%d \n", ptx->Norig, j);
+	//printf ("%d: (%d->%d) %s \n", j, ptx->Norig, j, ptx->in);
 }
 // Mostra a dependência detectada
 void Dependencia(int origA, int destA, int origB, int destB, bool show)
 {
+	Ndependencias++;
 	if (show == true)
 	{
-		printf(KRED);
-		printf("Dependência detectada:\n");
-		printf(KWHT);
-		printf("%d->%d (%s)\n", origA, destA, Sinput);
-		printf("%d->%d (%s)\n", origB, destB, Sinput);
+		//printf("Dependência detectada:\n");
+		//printf("%d->%d (%s)\n", origA, destA, Sinput);
+		//printf("%d->%d (%s)\n", origB, destB, Sinput);
+		printDependencia(origA, destA, origB);
+		printDependencia(origB, destB, origA);
 	}
-	Ndependencias++;
 }
 // Para cada transição do DG, procura dependência
 int countDependency(bool show)
@@ -62,8 +116,6 @@ int countDependency(bool show)
 						if (pty != ptx)
 							Dependencia(ptx->Norig, j, pty->Norig, k, show);
 		}
-	if (Ndependencias == 0)
-		printf("%sNenhuma dependência detectada.\n%s",KRED,KWHT); 
 	return Ndependencias;
 }
 //************************************/
@@ -213,10 +265,14 @@ void readKiss(FILE *input)
 //************************************/
 void analyseGD(char *Kiss_file, bool show, int *Ndependencias)
 {
+	if (show == true) printf("digraph {\n");
 	FILE *input = fopen (Kiss_file, "r");
 	checkFile(input, Kiss_file);
 	inicializa2();
 	readKiss(input);
-	if (show == true) showTransitions();
 	*Ndependencias = countDependency(show);
+	showTransitions(show);
+	if (show == true) printf("}\n");
+	if (*Ndependencias == 0)
+		printf("%sNenhuma dependência detectada.\n%s",KRED,KWHT); 
 }

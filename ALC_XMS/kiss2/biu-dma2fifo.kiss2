@@ -1,0 +1,24 @@
+# FSM Reduction and mapping (C) Univ. of Colorado VLSI
+.i 4
+.o 2
+.p 17
+.s 4
+.r S0
+-001 S0 S0 00
+0100 S0 S2 00
+1100 S0 S1 00
+-101 S0 S0 10
+-111 S0 S0 01
+-111 S1 S0 01
+-100 S1 S1 00
+-101 S1 S1 00
+-110 S1 S1 00
+-111 S2 S3 01
+-100 S2 S2 00
+-101 S2 S2 00
+-110 S2 S2 00
+-001 S3 S0 00
+-111 S3 S3 01
+-101 S3 S3 01
+-011 S3 S3 01
+.e
