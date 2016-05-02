@@ -54,7 +54,7 @@ void printTransition(int orig, int dest)
 			break;
 		}
 			
-	printf("%d->%d\n", orig, dest);
+	printf("S%d->S%d\n", orig, dest);
 }
 // Imprime uma nova dependência, se não for repetida
 void printDependencia(int orig, int dest, int depe)
@@ -72,7 +72,7 @@ void printDependencia(int orig, int dest, int depe)
 			break;
 		}
 			
-	printf("%s%d->%d [ label = \"%d\" ];%s\n", KRED, orig, dest, depe, KWHT);
+	printf("%sS%d->S%d [ label = \"S%d\" ];%s\n", KRED, orig, dest, depe, KWHT);
 }
 //************************************/
 //*        Análise do Grafo          */
