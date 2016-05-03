@@ -51,7 +51,8 @@ void parseBlif(FILE *input)
 			Ninput  = nextNumber(0,linha);
 		else if (strstr(linha, ".o") != NULL)  
 			Noutput = nextNumber(0,linha);
-	} while (strstr(linha, ".ob") == NULL);
+	} while (strstr(linha, ".ob") == NULL 
+			&& strstr(linha, ".p") == NULL);
 }
 
 // Constrói o núcleo VHDL

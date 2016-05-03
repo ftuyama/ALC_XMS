@@ -26,10 +26,11 @@ void exception(int lin, char* aux)
 int nextNumber(int lin, char* aux)
 {
 	int c, d = 0;
-	char aux2[MAX] = "";
+	char aux2[MAX] = "\0";
 	for(c=0; c<strlen(aux); c++)
 		if(aux[c]>47&&aux[c]<58)
 			aux2[d++] = aux[c];
+		else if (aux2[0] != '\0') break;
 	aux2[d] = '\0';
 	return atoi(aux2);
 }
@@ -71,10 +72,10 @@ void writeLog (char *file, char *name, int Nminstates, int Ndependencias, int Np
 {
 	FILE *output = fopen(file, "w");
 	fprintf(output, "%s\n", name);
-	fprintf(output, "Num_StateMin: %d\n", Nminstates);
-	fprintf(output, "Num_Dependen: %d\n", Ndependencias);
-	fprintf(output, "Num_Produtos: %d\n", Nprodutos);
-	fprintf(output, "Num_Literais: %d\n", Nliterais);
+	fprintf(output, "Num_StateMin:%d\n", Nminstates);
+	fprintf(output, "Num_Dependen:%d\n", Ndependencias);
+	fprintf(output, "Num_Produtos:%d\n", Nprodutos);
+	fprintf(output, "Num_Literais:%d\n", Nliterais);
 	fprintf(output, "------------------\n");
 	fclose(output);
 }

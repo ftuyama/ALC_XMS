@@ -82,6 +82,8 @@ void readBlif(FILE *input, FILE *out1, FILE *out2, FILE *out3)
 		else if (strstr(linha, ".ilb") != NULL);
 		else if (strstr(linha, ".ob")!= NULL)  
 			active = true;
+		else if (strstr(linha, ".p")!= NULL)  
+			active = true;
 		else if (strstr(linha, ".i") != NULL)  
 			Ninput  = nextNumber(lin,linha) - lenState;
 		else if (strstr(linha, ".o") != NULL)  

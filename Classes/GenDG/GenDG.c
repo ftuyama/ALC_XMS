@@ -85,9 +85,6 @@ void showTransitions(bool show)
 		for (int j = 0; j < Nstate; j++)
 			for (Inl *ptx = sttData[j].prox; ptx!=NULL; ptx = ptx->prox)
 				printTransition(ptx->Norig, j);
-
-	//printf ("%d->%d \n", ptx->Norig, j);
-	//printf ("%d: (%d->%d) %s \n", j, ptx->Norig, j, ptx->in);
 }
 // Mostra a dependência detectada
 void Dependencia(int origA, int destA, int origB, int destB, bool show)
@@ -95,9 +92,6 @@ void Dependencia(int origA, int destA, int origB, int destB, bool show)
 	Ndependencias++;
 	if (show == true)
 	{
-		//printf("Dependência detectada:\n");
-		//printf("%d->%d (%s)\n", origA, destA, Sinput);
-		//printf("%d->%d (%s)\n", origB, destB, Sinput);
 		printDependencia(origA, destA, origB);
 		printDependencia(origB, destB, origA);
 	}
@@ -169,71 +163,6 @@ void addTrans()
 	pt->prox = newInl;
 }
 
-// Determina o número de produtos e literais de um arquivo Blif
-void analyseBlif(char *Blif_file, int *Nprodutos, int *Nliterais)
-{
-	int logicBegin, *isSet, Noutput, Nblank, Nlines, j;
-	j = Nblank = Noutput = *Nliterais = *Nprodutos = 0;
-	
-	FILE *input = fopen (Blif_file, "r");
-	while (!(aux[0] == '.' && aux[1] == 'p'))
-		fgets(aux , MAX , input);
-	fgets(aux , MAX , input);
-	logicBegin = ftell(input);
-	
-	while (aux[++j] != ' ');
-	Noutput = (strlen(aux) - j); Nblank = j; 
-	isSet = (int*)malloc(Noutput*sizeof(int));
-	for (int i = 0; i < Noutput; i++)
-		isSet[i] = 0;
-		
-	while(Nlines == 0 && !(aux[0] == '.' && aux[1] == 'e'))
-	{
-		j = 0;
-		while (aux[++j] != ' ');
-		while(j++ < strlen(aux))
-			if (aux[j] == '0') 
-				Nlines = 1;
-		if (Nlines == 0)
-			*Nprodutos = *Nprodutos + 1;
-		fgets(aux , MAX , input);
-	}
-	
-	Nlines = *Nprodutos;
-	fseek(input, logicBegin, SEEK_SET );
-	for (int i = 0; i<Nlines; i++)
-	{
-		j = 0;
-		while(aux[j] != ' ')
-			if (aux[j++] != '-')
-				*Nliterais = *Nliterais + 1;
-		while(j++ < strlen(aux)) 
-			if (aux[j] == '1')
-				if (isSet[j - Nblank]++ == 1)
-					*Nprodutos = *Nprodutos + 1;
-		fgets(aux , MAX , input);
-	}
-	fclose(input);
-	free(isSet);
-}
-
-// Determina o número de estados do arquivo .kiss
-void analyseStatesKiss(char *Kiss_file, int *Nminstates)
-{
-	FILE *input = fopen (Kiss_file, "r");
-	checkFile(input, Kiss_file);
-	while (!feof(input))
-	{
-		fgets(aux , MAX , input);
-		if (aux[0] == '.' && aux[1] == 's')
-		{
-			fclose(input);
-			*Nminstates = nextNumber(0,aux); 
-			return;
-		}
-	}
-	fclose(input);
-}
 // Realiza a leitura do formato .kiss
 void readKiss(FILE *input)
 {
@@ -260,10 +189,75 @@ void readKiss(FILE *input)
 }
 
 //************************************/
+//*     Análise produtos/literais    */
+//*     dos arquivos .blif gerados	 */
+//************************************/
+// Determina o número de produtos e literais de um arquivo Blif
+void analyzeBlif(char *Blif_file, int *Nprodutos, int *Nliterais)
+{
+	int *isSet, j, Nblank = 0;
+	
+	FILE *input = fopen (Blif_file, "r");
+	while (!(aux[0] == '.' && aux[1] == 'p'))
+		fgets(aux , MAX , input);
+	fgets(aux , MAX , input);
+	
+	while (aux[++Nblank] != ' ');
+	isSet = (int*)malloc((strlen(aux) - Nblank)*sizeof(int));
+	for (int i = 0; i < (strlen(aux) - Nblank); i++)
+		isSet[i] = 0;
+		
+	while(!(aux[0] == '.' && aux[1] == 'e'))
+	{
+		for (int y = Nblank; y < strlen(aux); y++)
+			if (aux[y] == '0') 
+			{
+				fclose(input);
+				free(isSet);
+				return;
+			}
+		*Nprodutos += 1;
+		for(j = 0; aux[j] != ' '; j++)
+			if (aux[j] != '-')
+				*Nliterais += 1;
+		while(++j < strlen(aux)) 
+			if (aux[j] == '1')
+				if (isSet[j - Nblank]++ == 1)
+					*Nprodutos += 1;
+		fgets(aux , MAX , input);
+	}
+
+	fclose(input);
+	free(isSet);
+}
+
+//************************************/
+//*     Análise número de estados    */
+//*     do arquivo .kiss2 gerado	 */
+//************************************/
+// Determina o número de estados do arquivo .kiss
+void analyzeStatesKiss(char *Kiss_file, int *Nminstates)
+{
+	FILE *input = fopen (Kiss_file, "r");
+	checkFile(input, Kiss_file);
+	while (!feof(input))
+	{
+		fgets(aux , MAX , input);
+		if (aux[0] == '.' && aux[1] == 's')
+		{
+			fclose(input);
+			*Nminstates = nextNumber(0,aux); 
+			return;
+		}
+	}
+	fclose(input);
+}
+
+//************************************/
 //*     Núcleo da Análise do GD      */
 //*     					         */
 //************************************/
-void analyseGD(char *Kiss_file, bool show, int *Ndependencias)
+void analyzeGD(char *Kiss_file, bool show, int *Ndependencias)
 {
 	if (show == true) printf("digraph {\n");
 	FILE *input = fopen (Kiss_file, "r");

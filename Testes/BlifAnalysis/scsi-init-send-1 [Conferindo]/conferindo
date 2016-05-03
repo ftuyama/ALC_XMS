@@ -1,0 +1,63 @@
+scsi-init-send-1.nounc
+	
+##############################################
+#Como calculei Produtos/Literais do sistema: #
+##############################################
+
+				Produtos	 Literais
+FGC_min: 		5			9
+NSTATE_min:		7	 		8
+OUT_min:			4			8
+Total:			16			25
+
+#####################################
+# Pela soma de produtos em FGC_min: #
+#####################################
+
+---10- 1
+--0--0 1
+-0--1- 1
+--10-1 1
+
+---> Total -------------------------------
+FGC = A3*A4' + A2'*A5' + A2'*A4 + A2*A3'*A5
+5 produtos (4 portas AND & 1 porta OR)
+9 literais
+-------------------------------------------
+
+########################################
+# Pela soma de produtos em NSTATE_min: #
+########################################
+
+0----0 1~
+-1--11 1~
+--0--- ~1
+--1--- 1~
+---1-- 11
+
+NSTATE1 = A0'*A5' + A1*A4*A5 + A2 + A3		5 produtos (4 portas AND* & 1 porta OR)
+NSTATE2 = A2' + A3								3 produtos (2 portas AND* & 1 porta OR)
+ 
+---> Total -------------------------------
+	- Como A3 é comum para os dois, temos:
+7 produtos (5 portas AND* & 2 porta OR)
+8 literais
+-------------------------------------------
+*(A2, A2' e A3 são contados como produtos 'portas AND')
+
+#####################################
+# Pela soma de produtos em OUT_min: #
+#####################################
+
+1-0--0 ~1
+-1-00- ~1
+--10-- 1~
+
+OUT1 = A0*A2'*A5' + A1*A3'*A4'	3 produtos (2 portas AND* & 1 porta OR)
+OUT2 = A2*A3'							1 produtos (1 portas AND* & 0 porta OR)
+
+---> Total -------------------------------
+4 produtos (3 portas AND* & 1 porta OR)
+8 literais
+-------------------------------------------
+

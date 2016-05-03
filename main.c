@@ -11,10 +11,12 @@
 #include <string.h>
 #include "Classes/GenKiss2/GenKiss2.h"
 #include "Classes/GenDG/GenDG.h"
+#include "Classes/GenBlif/GenBlif.h"
 #include "Classes/GenFunc/GenFunc.h"
 #include "Classes/GenVHDL/GenVHDL.h"
 #include "Classes/tools/tools.h"
-int Nminstates, Ndependencias, Nprodutos, Nliterais;
+int Nminstates = 0, Ndependencias = 0;
+int Nprodutos = 0, Nliterais = 0;
 char fileName[MAX], name[MAX];
 bool showDG = false;
 bool useDDC = false; 
@@ -57,12 +59,12 @@ int main(int arc, char** argv)
 	printf("***************************************\n");
 	printf(KYEL);
 
-	//*****************************************/
-	//*  Interpretação do Comando de ALC XMS  */
-	//*****************************************/
-	showDG = true;
+	//********************************************/
+	//*  Argumentos Comando do software ALC XMS  */
+	//********************************************/
+
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("scsi-init-send-1.nounc");
+	else getFilePath("biu-dma2fifo.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	printf ("%sFileName[%s]%s\n", KRED, fileName, KYEL);
@@ -92,10 +94,9 @@ int main(int arc, char** argv)
 	if (showStamina == true)
 		system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
 	else system("stamina -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
-	analyseStatesKiss("ALC_XMS/kiss2/arquivo_min.kiss2", &Nminstates);
+	analyzeStatesKiss("ALC_XMS/kiss2/arquivo_min.kiss2", &Nminstates);
 	printf ("> Nº Estados minimizados: %d\n", Nminstates);
 
-	
 	//*****************************************/
 	//*   Análise do Grafo de Dependência     */
 	//*****************************************/
@@ -103,7 +104,7 @@ int main(int arc, char** argv)
 	// Faz análise do Grafo de Dependências
 	
 	printf("%s$ Análise do Grafo de Dependência.%s\n", KYEL, KWHT);
-	analyseGD("ALC_XMS/kiss2/arquivo_min.kiss2", showDG, &Ndependencias);
+	analyzeGD("ALC_XMS/kiss2/arquivo_min.kiss2", showDG, &Ndependencias);
 	printf("> Dependências detectadas: %d\n", Ndependencias);
 	printf(KMAG);
 	
@@ -118,8 +119,8 @@ int main(int arc, char** argv)
 	// Codificação One-Hot
 	if (Ndependencias != 0)
 	{
-		// system("jedi -e h arquivo_min.kiss2 >arquivo.blif");
-		system("jedi -p ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/blif/arquivo.blif");
+		system("jedi -e h ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/kiss2/oneHot.blif"); 
+		GenBlif("ALC_XMS/kiss2/oneHot.blif", "ALC_XMS/blif/arquivo.blif"); 
 		GenFunc("ALC_XMS/blif/arquivo.blif", "ALC_XMS/blif/FGC.blif", "ALC_XMS/blif/OUT.blif", "ALC_XMS/blif/NSTATE.blif");
 	}
 	// Assinalamento convencional usando JEDI
@@ -140,8 +141,11 @@ int main(int arc, char** argv)
 	system("espresso -o fr ALC_XMS/blif/FGC.blif >ALC_XMS/blif/FGC_min.blif");
 	system("espresso -o fr ALC_XMS/blif/OUT.blif >ALC_XMS/blif/OUT_min.blif");
 	system("espresso -o fr ALC_XMS/blif/NSTATE.blif >ALC_XMS/blif/NSTATE_min.blif");
-	analyseBlif("ALC_XMS/blif/arquivo_min.blif", &Nprodutos, &Nliterais);
 	
+	analyzeBlif("ALC_XMS/blif/FGC_min.blif", 	&Nprodutos, &Nliterais);
+	analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
+	analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
+
 	//*****************************************/
 	//*          Conversão para VHDL          */
 	//*****************************************/

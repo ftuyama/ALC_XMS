@@ -1,8 +1,10 @@
 # FSM Reduction and mapping (C) Univ. of Colorado VLSI
+.model jedi_output
+.start_kiss
 .i 4
 .o 2
-.p 17
 .s 4
+.p 17
 .r S0
 -001 S0 S0 00
 0100 S0 S2 00
@@ -21,4 +23,9 @@
 -111 S3 S3 01
 -101 S3 S3 01
 -011 S3 S3 01
-.e
+.end_kiss
+.code S0 1000
+.code S2 0100
+.code S1 0010
+.code S3 0001
+.end
