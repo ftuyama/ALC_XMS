@@ -125,6 +125,7 @@ void writeBlifBody(FILE *output, FILE *input)
 		// Printing input bits
 		for (i = 0, j = 0; aux[i] != ' '; i++, j++)
 			aux2[j] = aux[i];
+		aux2[j] = '\0';
 		fprintf(output, "%s", aux2);
 		
 		// Printing state bits

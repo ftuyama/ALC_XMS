@@ -5,7 +5,7 @@ scsi-init-send-1.nounc
 ##############################################
 
 				Produtos	 Literais
-FGC_min:			5			9
+FGC_min: 		5			9
 NSTATE_min:		7	 		8
 OUT_min:			4			8
 Total:			16			25

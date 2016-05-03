@@ -1,0 +1,68 @@
+biu-dma2fifo.nounc
+	
+##############################################
+#Como calculei Produtos/Literais do sistema: #
+##############################################
+
+				Produtos	 Literais
+FGC_min: 		4			9
+NSTATE_min:		15	 		30
+OUT_min:			4			8
+Total:			23			47
+
+#####################################
+# Pela soma de produtos em FGC_min: #
+#####################################
+
+---01--- 1
+-00----1 1
+--110--0 1
+
+---> Total -------------------------------
+FGC = A3'*A4 + A1'*A2'*A7 + A2*A3*A4'*A7'
+4 produtos (3 portas AND & 1 porta OR)
+9 literais
+-------------------------------------------
+
+########################################
+# Pela soma de produtos em NSTATE_min: #
+########################################
+
+---0-1-- ~1~~
+---0--1- ~~1~
+-1-----1 ~~~1
+---1-000 1~~~
+--0--1-- ~1~~
+--0---1- ~~1~
+0--0--0- ~1~~
+1--0-0-- ~~1~
+--110-0- ~~~1
+--11-0-0 1~~~
+-00----- 1~~~
+
+NSTATE1 = A3*A5'*A6'*A7' + A2*A3*A5'*A7' + A1'*A2'		4 produtos (3 portas AND* & 1 porta OR)
+NSTATE2 = A3'*A5 + A2'*A5 + A0'*A3'*A6'					4 produtos (3 portas AND* & 1 porta OR)
+NSTATE3 = A3'*A6 + A2'*A6 + A0*A3'*A5'						4 produtos (3 portas AND* & 1 porta OR)
+NSTATE4 = A1*A7 + A2*A3*A4'*A6'								3 produtos (2 portas AND* & 1 porta OR)
+ 
+---> Total -------------------------------
+15 produtos (11 portas AND* & 4 porta OR)
+30 literais
+-------------------------------------------
+
+#####################################
+# Pela soma de produtos em OUT_min: #
+#####################################
+
+-1011--- 1~
+-1-----1 ~1
+--11---- ~1
+
+OUT1 = A1*A2'*A3*A4'					1 produtos (1 portas AND* & 0 porta OR)
+OUT2 = A1*A7 + A2*A3					3 produtos (2 portas AND* & 1 porta OR)
+
+---> Total -------------------------------
+4 produtos (3 portas AND* & 1 porta OR)
+8 literais
+-------------------------------------------
+
