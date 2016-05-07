@@ -225,7 +225,7 @@ void constructMasterVHDL(FILE *output)
 	for (int i = 0; i < Nstt; i++)
 		fprintf(output, "STT%d: D_Latch    PORT MAP(IN_DELAY OR RESET, SLSTATE(%d), SSTATE(%d));\n", i, i, i);
 	for (int i = 0; i < Nout; i++)
-		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), OUTPUT(%d));\n", i, i, i, i, i);
+		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), SSOUT(%d));\n", i, i, i, i, i);
 	
 	fprintf(output, " \n  PROCESS(INPUT, RSTATE, RESET, IN_DELAY)\n");
 	fprintf(output, "  BEGIN\n");
