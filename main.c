@@ -64,9 +64,10 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("biu-dma2fifo.nounc");
+	else getFilePath("scsi-init-send-1.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
+	showDG = true;
 	printf ("%sFileName[%s]%s\n", KRED, fileName, KYEL);
 	system ("mkdir -p ALC_XMS");
 	system ("mkdir -p ALC_XMS/kiss2");
