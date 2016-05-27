@@ -179,8 +179,7 @@ void constructOUT(FILE *output)
 		for (; aux[j]!=' '; j++); j++;
 		
 		fprintf(output, " ");
-		for (; aux[j]!='\n'; j++, l++) 
-			fprintf(output, "%c", aux[j]);
+		for (; aux[j]!='\n'; j++, l++) fprintf(output, "%c", aux[j]);
 		fprintf(output, "\n");
 	}
 	fprintf(output, ".e");
@@ -189,7 +188,7 @@ void constructOUT(FILE *output)
 
 //************************************/
 //*   Núcleo da geração das funções  */
-//*     					         */
+//*									 */
 //************************************/
 void GenFunc(char *Blif_file, char *FGC, char *OUT, char *NSTATE)
 {

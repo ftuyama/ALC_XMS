@@ -1,0 +1,16 @@
+# Codificação
+# States.s0 1000
+# States.s2 0100
+# States.s4 0010
+# States.s6 0001
+.type fr
+.i 6
+.o 1
+.p 6
+-00--0 1
+-1-00- 1
+-01000 0
+-10100 0
+-10010 0
+-00001 0
+.end

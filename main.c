@@ -17,10 +17,12 @@
 #include "Classes/tools/tools.h"
 int Nminstates = 0, Ndependencias = 0;
 int Nprodutos = 0, Nliterais = 0;
+int Ninput, Noutput;
 char fileName[MAX], name[MAX];
 bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
+bool sincAnalysis = false;
 
 void getFilePath(char* name)
 {
@@ -64,10 +66,11 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("scsi-init-send-1.nounc");
+	else getFilePath("biu-fifo2dma.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
-	showDG = true;
+	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
+	
 	printf ("%sFileName[%s]%s\n", KRED, fileName, KYEL);
 	system ("mkdir -p ALC_XMS");
 	system ("mkdir -p ALC_XMS/kiss2");
@@ -118,7 +121,7 @@ int main(int arc, char** argv)
 	
 	printf("%s$ Assinalamento de Estados.%s\n", KYEL, KWHT);
 	// Codificação One-Hot
-	if (Ndependencias != 0)
+	if (Ndependencias != 0 && sincAnalysis == false)
 	{
 		system("jedi -e h ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/kiss2/oneHot.blif"); 
 		GenBlif("ALC_XMS/kiss2/oneHot.blif", "ALC_XMS/blif/arquivo.blif"); 
@@ -143,9 +146,15 @@ int main(int arc, char** argv)
 	system("espresso -o fr ALC_XMS/blif/OUT.blif >ALC_XMS/blif/OUT_min.blif");
 	system("espresso -o fr ALC_XMS/blif/NSTATE.blif >ALC_XMS/blif/NSTATE_min.blif");
 	
-	analyzeBlif("ALC_XMS/blif/FGC_min.blif", 	&Nprodutos, &Nliterais);
-	analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
-	analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
+	if (sincAnalysis == false) {
+		analyzeBlif("ALC_XMS/blif/FGC_min.blif", 	&Nprodutos, &Nliterais);
+		analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
+		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
+		Nprodutos += Noutput; Nliterais += Noutput;
+	} else {
+		analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
+		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
+	}
 
 	//*****************************************/
 	//*          Conversão para VHDL          */
@@ -158,7 +167,7 @@ int main(int arc, char** argv)
 	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
 	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch.vhdl");
-
+	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
 	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name);
@@ -168,7 +177,7 @@ int main(int arc, char** argv)
 	//*****************************************/
 	// Cria um arquivo Log com os resultados obtidos
 	fileNameDot("", ".nounc");
-	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais);
+	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	
 	return 0;
 }

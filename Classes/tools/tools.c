@@ -68,7 +68,8 @@ char* copia(char *aux)
 	return obj;
 }
 
-void writeLog (char *file, char *name, int Nminstates, int Ndependencias, int Nprodutos, int Nliterais)
+void writeLog (char *file, char *name, int Nminstates, int Ndependencias, 
+				int Nprodutos, int Nliterais, int Ninput, int Noutput)
 {
 	FILE *output = fopen(file, "w");
 	fprintf(output, "%s\n", name);
@@ -76,6 +77,8 @@ void writeLog (char *file, char *name, int Nminstates, int Ndependencias, int Np
 	fprintf(output, "Num_Dependen:%d\n", Ndependencias);
 	fprintf(output, "Num_Produtos:%d\n", Nprodutos);
 	fprintf(output, "Num_Literais:%d\n", Nliterais);
+	fprintf(output, "Num_Entradas:%d\n", Ninput);
+	fprintf(output, "Num_Saidas:%d\n",	 Noutput);
 	fprintf(output, "------------------\n");
 	fclose(output);
 }

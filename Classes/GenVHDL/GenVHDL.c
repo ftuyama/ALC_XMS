@@ -4,8 +4,8 @@
 #include "../tools/tools.h"
 
 char vhdlName[MAX];
-int Ninput, Noutput;
-int Nin, Nout, Nstt;
+int Nin, Nout;
+int Ninput, Noutput, Nstt;
 //************************************/
 //*      Construção da base do       */
 //*           arquivo VHDL		     */
@@ -19,8 +19,8 @@ void constructVHDLHeader(FILE *output)
 	fprintf(output, "\n");
 	fprintf(output, "ENTITY %s_Block IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
+	fprintf(output, "    INPUT : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nout - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END %s_Block;\n", vhdlName);
 	fprintf(output, "\n");
@@ -48,9 +48,9 @@ void parseBlif(FILE *input)
 		if (strstr(linha, ".ob") != NULL);
 		else if (strstr(linha, ".ilb") != NULL);
 		else if (strstr(linha, ".i") != NULL)
-			Ninput  = nextNumber(0,linha);
+			Nin  = nextNumber(0,linha);
 		else if (strstr(linha, ".o") != NULL)  
-			Noutput = nextNumber(0,linha);
+			Nout = nextNumber(0,linha);
 	} while (strstr(linha, ".ob") == NULL 
 			&& strstr(linha, ".p") == NULL);
 }
@@ -73,7 +73,7 @@ void constructVHDL(FILE *input, FILE *output)
 		fgets(linha , MAX , input);
 	}
 	fprintf(output, "e OUTPUT <= \"");
-	for (int i = 0; i < Noutput; i++)
+	for (int i = 0; i < Nout; i++)
 		fprintf(output, "-");
 	fprintf(output, "\";\n");
 	fclose(input);
@@ -130,11 +130,11 @@ void parseKiss(FILE *input)
 	{
 		fgets(linha , MAX , input);
 		if (strstr(linha, ".i") != NULL)
-			Nin  = nextNumber(0,linha);
+			Ninput  = nextNumber(0,linha);
 		if (strstr(linha, ".o") != NULL)  
-			Nout = nextNumber(0,linha);
+			Noutput = nextNumber(0,linha);
 	} while (strstr(linha, ".p") == NULL);
-	Nstt = Ninput - Nin;
+	Nstt = Nin - Ninput;
 	fclose(input);
 }
 
@@ -169,8 +169,8 @@ void constructMasterVHDL(FILE *output)
 	fprintf(output, "\n");
 	fprintf(output, "ENTITY %s IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nout - 1));
+	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "    STATE  : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "    RSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "    RESET  : IN  STD_LOGIC;\n");
@@ -183,22 +183,22 @@ void constructMasterVHDL(FILE *output)
 	
 	fprintf(output, "COMPONENT FGC_Block IS\n"); 
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC\n");
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 	
 	fprintf(output, "COMPONENT NSTATE_Block IS\n");
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nstt - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 	
 	fprintf(output, "COMPONENT OUT_Block IS\n");
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nout - 1));
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 	
@@ -213,8 +213,8 @@ void constructMasterVHDL(FILE *output)
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SLSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
-	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nout - 1));
-	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nout - 1));
+	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	
 	fprintf(output, "\nBEGIN\n");
 	
@@ -224,7 +224,7 @@ void constructMasterVHDL(FILE *output)
 
 	for (int i = 0; i < Nstt; i++)
 		fprintf(output, "STT%d: D_Latch    PORT MAP(IN_DELAY OR RESET, SLSTATE(%d), SSTATE(%d));\n", i, i, i);
-	for (int i = 0; i < Nout; i++)
+	for (int i = 0; i < Noutput; i++)
 		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), SSOUT(%d));\n", i, i, i, i, i);
 	
 	fprintf(output, " \n  PROCESS(INPUT, RSTATE, RESET, IN_DELAY)\n");

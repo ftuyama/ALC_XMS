@@ -1,6 +1,8 @@
 select2p.nounc
 Num_StateMin:7
 Num_Dependen:8
-Num_Produtos:22
-Num_Literais:49
+Num_Produtos:32
+Num_Literais:62
+Num_Entradas:2
+Num_Saidas:2
 ------------------
