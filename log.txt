@@ -1,8 +1,8 @@
-biu-fifo2dma.nounc
-Num_StateMin:3
-Num_Dependen:2
-Num_Produtos:21
-Num_Literais:42
-Num_Entradas:4
+re-setup.nounc
+Num_StateMin:2
+Num_Dependen:0
+Num_Produtos:3
+Num_Literais:7
+Num_Entradas:3
 Num_Saidas:2
 ------------------

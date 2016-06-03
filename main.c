@@ -22,7 +22,7 @@ char fileName[MAX], name[MAX];
 bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
-bool sincAnalysis = false;
+bool sincAnalysis = true;
 
 void getFilePath(char* name)
 {
@@ -66,7 +66,7 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("biu-fifo2dma.nounc");
+	else getFilePath("hp-ir.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
@@ -152,8 +152,7 @@ int main(int arc, char** argv)
 		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
 		Nprodutos += Noutput; Nliterais += Noutput;
 	} else {
-		analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
-		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
+		analyzeDefaultBlif("ALC_XMS/blif/arquivo_min.blif", &Nprodutos, &Nliterais);
 	}
 
 	//*****************************************/

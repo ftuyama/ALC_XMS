@@ -193,6 +193,67 @@ void readKiss(FILE *input)
 //*     dos arquivos .blif gerados	 */
 //************************************/
 // Determina o número de produtos e literais de um arquivo Blif
+// Conforme o padrão utilizado em Minimalist
+void analyzeDefaultBlif(char *Blif_file, int *Nprodutos, int *Nliterais)
+{
+	int j, flag, Nblank = 0;
+	int *isSet, *literais_down, *literais_up;
+	
+	FILE *input = fopen (Blif_file, "r");
+	while (!(aux[0] == '.' && aux[1] == 'p'))
+		fgets(aux , MAX , input);
+	fgets(aux , MAX , input);
+	
+	while (aux[++Nblank] != ' ');
+	
+	literais_down = (int*)malloc((Nblank-1)*sizeof(int));
+	literais_up = (int*)malloc((Nblank-1)*sizeof(int));
+	for (int i = 0; i < Nblank; i++)
+		literais_down[i] = literais_up[i] = 0;
+	
+	isSet = (int*)malloc((strlen(aux) - Nblank)*sizeof(int));
+	for (int i = 0; i < (strlen(aux) - Nblank); i++)
+		isSet[i] = 0;
+		
+	while(!(aux[0] == '.' && aux[1] == 'e'))
+	{
+		for (int y = Nblank; y < strlen(aux); y++)
+			if (aux[y] == '0') 
+			{
+				fclose(input);
+				free(isSet);
+				free(literais_down);
+				free(literais_up);
+				return;
+			}
+		for(j = 0; aux[j] != ' '; j++)
+			if (aux[j] == '0' && literais_down[j] == 0) {
+				literais_down[j] = 1;
+				*Nliterais += 1;
+			}
+			else if (aux[j] == '1' && literais_up[j] == 0) {
+				literais_up[j] = 1;
+				*Nliterais += 1;
+			}
+		flag = 0;
+		for (int l = j + 1; l < strlen(aux); l++)
+			if (aux[l] == '1' && isSet[l - Nblank] == 1) 
+				flag = 1;
+		if (flag == 0) {
+			*Nprodutos += 1;
+			while(++j < strlen(aux)) 
+				if (aux[j] == '1') 
+					isSet[j - Nblank] = 1;
+		}
+		fgets(aux , MAX , input);
+	}
+
+	fclose(input);
+	free(isSet);
+}
+
+// Determina o número de produtos e literais de um arquivo Blif
+// Conforme o padrão estabelecido em sala de aula.
 void analyzeBlif(char *Blif_file, int *Nprodutos, int *Nliterais)
 {
 	int *isSet, j, Nblank = 0;
