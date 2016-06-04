@@ -152,7 +152,9 @@ int main(int arc, char** argv)
 		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
 		Nprodutos += Noutput; Nliterais += Noutput;
 	} else {
-		analyzeDefaultBlif("ALC_XMS/blif/arquivo_min.blif", &Nprodutos, &Nliterais);
+		//analyzeDefaultBlif("ALC_XMS/blif/arquivo_min.blif", &Nprodutos, &Nliterais);
+		analyzeBlif("ALC_XMS/blif/NSTATE_min.blif", &Nprodutos, &Nliterais);
+		analyzeBlif("ALC_XMS/blif/OUT_min.blif", 	&Nprodutos, &Nliterais);
 	}
 
 	//*****************************************/

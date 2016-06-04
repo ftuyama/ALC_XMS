@@ -14,15 +14,15 @@ BEGIN
   PROCESS(INPUT)
   BEGIN
      if std_match(INPUT, "0001") then OUTPUT <= "00";
-     elsif std_match(INPUT, "0101") then OUTPUT <= "00";
-     elsif std_match(INPUT, "0100") then OUTPUT <= "00";
      elsif std_match(INPUT, "1001") then OUTPUT <= "10";
-     elsif std_match(INPUT, "1000") then OUTPUT <= "01";
      elsif std_match(INPUT, "1011") then OUTPUT <= "00";
-     elsif std_match(INPUT, "1010") then OUTPUT <= "00";
      elsif std_match(INPUT, "1101") then OUTPUT <= "01";
+     elsif std_match(INPUT, "1010") then OUTPUT <= "00";
+     elsif std_match(INPUT, "0000") then OUTPUT <= "00";
      elsif std_match(INPUT, "1100") then OUTPUT <= "01";
      elsif std_match(INPUT, "1110") then OUTPUT <= "01";
+     elsif std_match(INPUT, "1000") then OUTPUT <= "01";
+     elsif std_match(INPUT, "0100") then OUTPUT <= "01";
      else OUTPUT <= "--";
     END if;
 
