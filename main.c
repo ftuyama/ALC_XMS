@@ -23,6 +23,7 @@ bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
 bool sincAnalysis = false;
+bool debugMode = false;
 
 void getFilePath(char* name)
 {
@@ -171,11 +172,11 @@ int main(int arc, char** argv)
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, false);
+	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, false, debugMode);
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, true);
+	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, true, debugMode);
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/arquivo_min.blif", name);

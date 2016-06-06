@@ -302,7 +302,127 @@ void constructMasterSyncVHDL(FILE *output)
 	fprintf(output, "END ALC_XMS;\n");
 }
 
-void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync)
+void constructOptimizedVHDL(FILE *output)
+{
+	fprintf(output, "library IEEE;\n");
+	fprintf(output, "use IEEE.std_logic_1164.all;\n");
+	fprintf(output, "use IEEE.NUMERIC_STD.all;\n");
+	fprintf(output, "\n");
+	fprintf(output, "ENTITY %s IS\n", vhdlName);
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
+	fprintf(output, "  );\n");
+	fprintf(output, "END ENTITY %s;\n", vhdlName);
+	fprintf(output, "\n");
+	fprintf(output, "ARCHITECTURE ALC_XMS OF %s IS\n\n", vhdlName);
+	
+	fprintf(output, "COMPONENT FGC_Block IS\n"); 
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+	
+	fprintf(output, "COMPONENT NSTATE_Block IS\n");
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nstt - 1));
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+	
+	fprintf(output, "COMPONENT OUT_Block IS\n");
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+	
+	fprintf(output, "COMPONENT D_Latch IS\n");
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    EN : in  STD_LOGIC;\n");
+	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    Q  : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+
+	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL FGC    : STD_LOGIC_VECTOR(0 DOWNTO 0);\n");
+	
+	fprintf(output, "\nBEGIN\n");
+	
+	fprintf(output, "B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC(0));\n");
+	fprintf(output, "B2: NSTATE_Block PORT MAP(INPUT & SSTATE, SNSTATE);\n");
+	fprintf(output, "B3: OUT_Block    PORT MAP(INPUT & SSTATE, SOUT);\n");
+
+	for (int i = 0; i < Nstt; i++)
+		fprintf(output, "STT%d: D_Latch    PORT MAP(FGC(0), SNSTATE(%d), SSTATE(%d));\n", i, i, i);
+	for (int i = 0; i < Noutput; i++)
+		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), SSOUT(%d));\n", i, i, i, i, i);
+	
+	fprintf(output, " \n  PROCESS(INPUT)\n");
+	fprintf(output, "  BEGIN\n");
+	fprintf(output, "    OUTPUT <= SSOUT;\n");
+	fprintf(output, "  END PROCESS;\n");
+	
+	fprintf(output, "END ALC_XMS;\n");
+}
+
+void constructOptimizedSyncVHDL(FILE *output)
+{
+	fprintf(output, "library IEEE;\n");
+	fprintf(output, "use IEEE.std_logic_1164.all;\n");
+	fprintf(output, "use IEEE.NUMERIC_STD.all;\n");
+	fprintf(output, "\n");
+	fprintf(output, "ENTITY %s IS\n", vhdlName);
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
+	fprintf(output, "  );\n");
+	fprintf(output, "END ENTITY %s;\n", vhdlName);
+	fprintf(output, "\n");
+	fprintf(output, "ARCHITECTURE ALC_XMS OF %s IS\n\n", vhdlName);
+	
+	fprintf(output, "COMPONENT %s_Block IS\n", vhdlName);
+	fprintf(output, "  PORT (\n");
+	fprintf(output, "    INPUT  : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput + Nstt - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput + Nstt - 1));
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+
+	fprintf(output, "COMPONENT D_Latch IS\n");
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    EN : in  STD_LOGIC;\n");
+	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    Q  : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+
+	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	
+	fprintf(output, "\nBEGIN\n");
+	fprintf(output, "B: %s_Block    PORT MAP(INPUT & SSTATE, SSTATE & SOUT);\n", vhdlName);
+
+	for (int i = 0; i < Nstt; i++)
+		fprintf(output, "STT%d: D_Latch    PORT MAP(RESET, SLSTATE(%d), SSTATE(%d));\n", i, i, i);
+	for (int i = 0; i < Noutput; i++)
+		fprintf(output, "OUT%d: D_Latch    PORT MAP(RESET, SOUT(%d), SSOUT(%d));\n", i, i, i);
+	
+	fprintf(output, " \n  PROCESS(INPUT)\n");
+	fprintf(output, "  BEGIN\n");
+	fprintf(output, "    OUTPUT <= SSOUT;\n");
+	fprintf(output, "  END PROCESS;\n");
+	
+	fprintf(output, "END ALC_XMS;\n");
+}
+
+void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug)
 {
 	FILE *BLIF_IN  = fopen (Blif_file, "r");
 	FILE *KISS_IN  = fopen (Kiss_file, "r");
@@ -314,7 +434,11 @@ void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync)
 	parseBlif(BLIF_IN);
 	parseKiss(KISS_IN);
 	
-	if (sync == false)
-		constructMasterVHDL(VHDL_OUT); 
-	else constructMasterSyncVHDL(VHDL_OUT);
+	if (debug == true) {
+		if (sync == false) constructMasterVHDL(VHDL_OUT); 
+		else constructMasterSyncVHDL(VHDL_OUT);
+	} else {
+		if (sync == false) constructOptimizedVHDL(VHDL_OUT); 
+		else constructOptimizedSyncVHDL(VHDL_OUT);
+	}
 }
