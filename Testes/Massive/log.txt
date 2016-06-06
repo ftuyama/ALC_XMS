@@ -1,8 +1,8 @@
-select2p.nounc
+select2p_SYNC.nounc
 Num_StateMin:7
 Num_Dependen:8
-Num_Produtos:19
-Num_Literais:45
+Num_Produtos:32
+Num_Literais:62
 Num_Entradas:2
 Num_Saidas:2
 ------------------

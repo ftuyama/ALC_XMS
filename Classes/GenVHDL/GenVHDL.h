@@ -6,6 +6,6 @@
 
 void GenVHDL(char *Blif_file, char *Vhdl_file);
 void GenDLatchVHDL(char *DLatch_file);
-void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file);
+void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync);
 
 #endif

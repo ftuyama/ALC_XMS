@@ -1,8 +1,8 @@
-hp-ir.nounc
-Num_StateMin:2
+scsi-init-send-1_SYNC.nounc
+Num_StateMin:3
 Num_Dependen:0
-Num_Produtos:8
-Num_Literais:14
-Num_Entradas:3
+Num_Produtos:18
+Num_Literais:27
+Num_Entradas:4
 Num_Saidas:2
 ------------------

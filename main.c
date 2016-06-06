@@ -22,7 +22,7 @@ char fileName[MAX], name[MAX];
 bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
-bool sincAnalysis = true;
+bool sincAnalysis = false;
 
 void getFilePath(char* name)
 {
@@ -66,7 +66,7 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("hp-ir.nounc");
+	else getFilePath("scsi-init-send-1.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
@@ -171,7 +171,14 @@ int main(int arc, char** argv)
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name);
+	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, false);
+	
+	getFileName(); 
+	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");
+	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, true);
+	getFileName(); 
+	fileNameDot("ALC_XMS/vhdl/", "_Block.vhdl");
+	GenVHDL("ALC_XMS/blif/arquivo_min.blif", name);
 
 	//*****************************************/
 	//*          Generate Log File            */
