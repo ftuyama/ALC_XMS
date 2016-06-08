@@ -19,8 +19,8 @@ void constructVHDLHeader(FILE *output)
 	fprintf(output, "\n");
 	fprintf(output, "ENTITY %s_Block IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    INPUT : IN STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nout - 1));
+	fprintf(output, "    INPUT : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nin - 1));
+	fprintf(output, "    OUTPUT: OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Nout - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END %s_Block;\n", vhdlName);
 	fprintf(output, "\n");
@@ -61,13 +61,19 @@ void constructVHDL(FILE *input, FILE *output)
 	int j;
 	char linha[MAX];
 	fgets(linha , MAX , input);
+	if (strstr(linha, ".p") != NULL)
+		fgets(linha , MAX , input);
 	while (strstr(linha, ".e") == NULL) {
 		j = 0;
 		fprintf(output, "if std_match(INPUT, ");
+		for (int i = 0; i < strlen(linha); i++)
+			if (linha[i] == '~') linha[i] = '-';
 		fprintf(output, "\"%.*s\"", (int)(strchr(linha, ' ') - linha), linha);
 		for (; linha[j]!=' '; j++);
 		
 		fprintf(output, ") then OUTPUT <= ");
+		for (int i = 0; i < strlen(linha); i++)
+			if (linha[i] == '~') linha[i] = '-';
 		fprintf(output, "\"%.*s\";\n", (int)strlen(linha) - j - 2, linha + j + 1);
 		fprintf(output, "     els");
 		fgets(linha , MAX , input);
@@ -380,7 +386,8 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "ENTITY %s IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
 	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
+	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "    RESET  : IN  STD_LOGIC\n");
 	fprintf(output, "  );\n");
 	fprintf(output, "END ENTITY %s;\n", vhdlName);
 	fprintf(output, "\n");
@@ -402,21 +409,22 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "END COMPONENT;\n\n");
 
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
-	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
-	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
-	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput + Nstt - 1));
+	fprintf(output, "  SIGNAL HIGH	 : STD_LOGIC;");
 	
 	fprintf(output, "\nBEGIN\n");
-	fprintf(output, "B: %s_Block    PORT MAP(INPUT & SSTATE, SSTATE & SOUT);\n", vhdlName);
+	fprintf(output, "B: %s_Block    PORT MAP(INPUT & SSTATE, SOUT);\n", vhdlName);
 
 	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "STT%d: D_Latch    PORT MAP(RESET, SLSTATE(%d), SSTATE(%d));\n", i, i, i);
-	for (int i = 0; i < Noutput; i++)
-		fprintf(output, "OUT%d: D_Latch    PORT MAP(RESET, SOUT(%d), SSOUT(%d));\n", i, i, i);
+		fprintf(output, "STT%d: D_Latch    PORT MAP(RESET, SOUT(%d), HIGH);\n", i, i);
+	for (int i = Nstt; i < Nstt + Noutput; i++)
+		fprintf(output, "OUT%d: D_Latch    PORT MAP(RESET, SOUT(%d), HIGH);\n", i, i);
 	
 	fprintf(output, " \n  PROCESS(INPUT)\n");
 	fprintf(output, "  BEGIN\n");
-	fprintf(output, "    OUTPUT <= SSOUT;\n");
+	fprintf(output, "  	 HIGH <= '1';\n");
+	fprintf(output, "    SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
+	fprintf(output, "    OUTPUT <= SOUT(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  END PROCESS;\n");
 	
 	fprintf(output, "END ALC_XMS;\n");

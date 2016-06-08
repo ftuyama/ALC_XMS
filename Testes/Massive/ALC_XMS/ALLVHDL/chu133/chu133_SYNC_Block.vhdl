@@ -4,8 +4,8 @@ use IEEE.NUMERIC_STD.all;
 
 ENTITY chu133_SYNC_Block IS
   PORT (
-    INPUT : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-    OUTPUT : OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
+    INPUT : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
+    OUTPUT: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
   );
 END chu133_SYNC_Block;
 
@@ -13,21 +13,20 @@ ARCHITECTURE version OF chu133_SYNC_Block IS
 BEGIN
   PROCESS(INPUT)
   BEGIN
-     if std_match(INPUT, ".p") then OUTPUT <= "14";
-     elsif std_match(INPUT, "0000") then OUTPUT <= "~1~~";
-     elsif std_match(INPUT, "0101") then OUTPUT <= "~~~1";
-     elsif std_match(INPUT, "--01") then OUTPUT <= "1~1~";
-     elsif std_match(INPUT, "1---") then OUTPUT <= "1~1~";
-     elsif std_match(INPUT, "0001") then OUTPUT <= "~0~0";
-     elsif std_match(INPUT, "0000") then OUTPUT <= "0~00";
+     if std_match(INPUT, "0000") then OUTPUT <= "-1--";
+     elsif std_match(INPUT, "0101") then OUTPUT <= "---1";
+     elsif std_match(INPUT, "--01") then OUTPUT <= "1-1-";
+     elsif std_match(INPUT, "1---") then OUTPUT <= "1-1-";
+     elsif std_match(INPUT, "0001") then OUTPUT <= "-0-0";
+     elsif std_match(INPUT, "0000") then OUTPUT <= "0-00";
      elsif std_match(INPUT, "0010") then OUTPUT <= "0000";
-     elsif std_match(INPUT, "0101") then OUTPUT <= "~0~~";
+     elsif std_match(INPUT, "0101") then OUTPUT <= "-0--";
      elsif std_match(INPUT, "0100") then OUTPUT <= "0000";
      elsif std_match(INPUT, "0111") then OUTPUT <= "0000";
      elsif std_match(INPUT, "0110") then OUTPUT <= "0000";
-     elsif std_match(INPUT, "1001") then OUTPUT <= "~0~0";
-     elsif std_match(INPUT, "1000") then OUTPUT <= "~0~0";
-     elsif std_match(INPUT, "1101") then OUTPUT <= "~0~0";
+     elsif std_match(INPUT, "1001") then OUTPUT <= "-0-0";
+     elsif std_match(INPUT, "1000") then OUTPUT <= "-0-0";
+     elsif std_match(INPUT, "1101") then OUTPUT <= "-0-0";
      else OUTPUT <= "----";
     END if;
 
