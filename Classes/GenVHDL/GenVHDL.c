@@ -387,7 +387,8 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "  PORT (\n");
 	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
-	fprintf(output, "    RESET  : IN  STD_LOGIC\n");
+	fprintf(output, "    RESET  : IN  STD_LOGIC;\n");
+	fprintf(output, "    CLOCK  : IN  STD_LOGIC\n");
 	fprintf(output, "  );\n");
 	fprintf(output, "END ENTITY %s;\n", vhdlName);
 	fprintf(output, "\n");
@@ -400,31 +401,18 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 
-	fprintf(output, "COMPONENT D_Latch IS\n");
-	fprintf(output, "  Port (\n");
-	fprintf(output, "    EN : in  STD_LOGIC;\n");
-	fprintf(output, "    D  : in  STD_LOGIC;\n");
-	fprintf(output, "    Q  : out STD_LOGIC\n");
-	fprintf(output, "  );\n");
-	fprintf(output, "END COMPONENT;\n\n");
-
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput + Nstt - 1));
-	fprintf(output, "  SIGNAL HIGH	 : STD_LOGIC;");
 	
 	fprintf(output, "\nBEGIN\n");
 	fprintf(output, "B: %s_Block    PORT MAP(INPUT & SSTATE, SOUT);\n", vhdlName);
-
-	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "STT%d: D_Latch    PORT MAP(RESET, SOUT(%d), HIGH);\n", i, i);
-	for (int i = Nstt; i < Nstt + Noutput; i++)
-		fprintf(output, "OUT%d: D_Latch    PORT MAP(RESET, SOUT(%d), HIGH);\n", i, i);
 	
-	fprintf(output, " \n  PROCESS(INPUT)\n");
+	fprintf(output, " \n  PROCESS(CLOCK)\n");
 	fprintf(output, "  BEGIN\n");
-	fprintf(output, "  	 HIGH <= '1';\n");
-	fprintf(output, "    SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
-	fprintf(output, "    OUTPUT <= SOUT(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "    IF (RISING_EDGE(CLOCK)) THEN\n");
+	fprintf(output, "    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
+	fprintf(output, "    	OUTPUT <= SOUT(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "    END IF;\n");
 	fprintf(output, "  END PROCESS;\n");
 	
 	fprintf(output, "END ALC_XMS;\n");

@@ -1,4 +1,4 @@
-biu-fifo2dma_SYNC.nounc
+biu_fifo2dma_SYNC.nounc
 Num_StateMin:3
 Num_Dependen:2
 Num_Produtos:21
@@ -6,7 +6,7 @@ Num_Literais:42
 Num_Entradas:4
 Num_Saidas:2
 ------------------
-sc-control_SYNC.nounc
+sc_control_SYNC.nounc
 Num_StateMin:18
 Num_Dependen:1438
 Num_Produtos:190
@@ -14,7 +14,7 @@ Num_Literais:988
 Num_Entradas:13
 Num_Saidas:17
 ------------------
-pe-send-ifc_SYNC.nounc
+pe_send_ifc_SYNC.nounc
 Num_StateMin:4
 Num_Dependen:10
 Num_Produtos:45
@@ -38,7 +38,7 @@ Num_Literais:21
 Num_Entradas:3
 Num_Saidas:3
 ------------------
-two-ticks-if_SYNC.nounc
+two_ticks_if_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:13
@@ -46,7 +46,7 @@ Num_Literais:20
 Num_Entradas:4
 Num_Saidas:2
 ------------------
-call-proc_SYNC.nounc
+call_proc_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:28
@@ -54,7 +54,7 @@ Num_Literais:63
 Num_Entradas:3
 Num_Saidas:3
 ------------------
-ack-xbm1_SYNC.nounc
+ack_xbm1_SYNC.nounc
 Num_StateMin:4
 Num_Dependen:20
 Num_Produtos:37
@@ -62,7 +62,7 @@ Num_Literais:69
 Num_Entradas:4
 Num_Saidas:5
 ------------------
-dram-ctrl_SYNC.nounc
+dram_ctrl_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:44
@@ -78,7 +78,7 @@ Num_Literais:11
 Num_Entradas:3
 Num_Saidas:3
 ------------------
-hp-ir_SYNC.nounc
+hp_ir_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:14
@@ -86,7 +86,7 @@ Num_Literais:24
 Num_Entradas:3
 Num_Saidas:2
 ------------------
-scsi-init-send_SYNC.nounc
+scsi_init_send_SYNC.nounc
 Num_StateMin:4
 Num_Dependen:0
 Num_Produtos:27
@@ -94,7 +94,7 @@ Num_Literais:51
 Num_Entradas:5
 Num_Saidas:3
 ------------------
-hp-ex01_SYNC.nounc
+hp_ex01_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:25
@@ -102,7 +102,7 @@ Num_Literais:35
 Num_Entradas:5
 Num_Saidas:5
 ------------------
-re-setup_SYNC.nounc
+re_setup_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:12
@@ -126,7 +126,7 @@ Num_Literais:16
 Num_Entradas:2
 Num_Saidas:2
 ------------------
-pe-rcv-ifc_SYNC.nounc
+pe_rcv_ifc_SYNC.nounc
 Num_StateMin:7
 Num_Dependen:26
 Num_Produtos:57
@@ -134,7 +134,7 @@ Num_Literais:153
 Num_Entradas:4
 Num_Saidas:4
 ------------------
-scsi-init-send-1_SYNC.nounc
+scsi_init_send_1_SYNC.nounc
 Num_StateMin:3
 Num_Dependen:0
 Num_Produtos:18
@@ -142,7 +142,7 @@ Num_Literais:27
 Num_Entradas:4
 Num_Saidas:2
 ------------------
-biu-dma2fifo_SYNC.nounc
+biu_dma2fifo_SYNC.nounc
 Num_StateMin:4
 Num_Dependen:2
 Num_Produtos:25
@@ -158,7 +158,7 @@ Num_Literais:507
 Num_Entradas:10
 Num_Saidas:5
 ------------------
-nak-pa_SYNC.nounc
+nak_pa_SYNC.nounc
 Num_StateMin:2
 Num_Dependen:0
 Num_Produtos:24

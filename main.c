@@ -36,7 +36,9 @@ void getFilePath(char* name)
 void getFileName()
 {
 	int i = strlen(name), j = 0;
-	while(name[--i] != '/' && i !=0);
+	while(name[--i] != '/' && i !=0)
+		if (name[i] == '-')
+			name[i] = '_';
 	if (i == 0) i--;
 	while(name[i] != '.')
 		fileName[j++] = name[++i];
