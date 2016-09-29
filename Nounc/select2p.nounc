@@ -1,0 +1,14 @@
+input	r                        0
+input	sel                      0
+output	a                        0
+output	s2                       0
+
+0  4	[sel+] r+                |  a+ 
+0  2	[sel-] r+                |  s2+ 
+4  0	[sel+] r-                |  a- 
+4  6	[sel-] r-                |  s2+ 
+6  2	[sel+] r+                |  a- 
+2  6	[sel+] r-                |  a+ 
+6  4	[sel-] r+                |  s2- 
+2  0	[sel-] r-                |  s2- 
+

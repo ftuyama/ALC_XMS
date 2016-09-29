@@ -1,0 +1,13 @@
+; exemplo em XBM RE-Setup
+input Reqrcv 0
+input Sending 0
+input Ackend 0
+output Enwoq 0
+output Rejsend 0
+0 1 Sending+ |
+1 2 Reqrcv+ | Rejsend+
+2 3 Sending- Ackend+ | Rejsend-
+3 4 Ackend- | Enwoq+
+4 0 Reqrcv- | Enwoq-
+0 5 Reqrcv+ | Enwoq+
+5 0 Reqrcv- | Enwoq-
