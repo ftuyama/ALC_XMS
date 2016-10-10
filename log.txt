@@ -1,8 +1,8 @@
-pscsi_SYNC.nounc
-Num_StateMin:8
-Num_Dependen:76
-Num_Produtos:132
-Num_Literais:507
-Num_Entradas:10
-Num_Saidas:5
+scsi_init_send_1_SYNC.nounc
+Num_StateMin:3
+Num_Dependen:0
+Num_Produtos:18
+Num_Literais:27
+Num_Entradas:4
+Num_Saidas:2
 ------------------

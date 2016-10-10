@@ -41,6 +41,7 @@ void addNewTrans(char *linha)
 	int tam = strlen(linha) + 3;
 	newTrans = (Tran*)malloc(sizeof(Tran));
 	newTrans->string = (char*)malloc(tam*sizeof(char));
+	newTrans->prox = NULL;
 	for (int j = 0, k = 0; j < strlen(linha); j++, k++)
 	{
 		if (j == Ninput) newTrans->string[k++] = ' ';
@@ -61,6 +62,7 @@ void addNewState(char *linha)
 	lenState = strlen(linha) - j - 1;
 	newStt = (Stt*)malloc(sizeof(Stt));
 	newStt->code = (char*)malloc(lenState*sizeof(char));
+	newStt->prox = NULL;
 	for (int k = 0; j < strlen(linha); j++, k++)
 		newStt->code[k] = linha[j];
 	for(p = State; p->prox != NULL; p = p->prox);
@@ -90,7 +92,7 @@ void readBlif(FILE *input, FILE *out1, FILE *out2, FILE *out3)
 			Noutput = nextNumber(lin,linha) - lenState;
 		else if (strstr(linha, ".e") != NULL) 
 			readTrans = false;
-			
+
 		if (readTrans == true)
 			addNewTrans(linha);
 		else if (strstr(linha, ".ob")!= NULL) {
