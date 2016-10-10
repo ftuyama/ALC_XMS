@@ -31,16 +31,21 @@ void encode(char *aux)
 	
 	for (j = 0, i++; aux[i] != ' '; i++, j++)
 		entry->key[j] = aux[i];
-	entry->key[++j] = '\0';
+	entry->key[j] = '\0';
 
 	for (j = 0, i++; i < strlen(aux); i++, j++)
 		entry->value[j] = aux[i];
-	entry->value[++j] = '\0';
+	entry->value[j] = '\0';
+	entry->prox = NULL;
 
+	if (dicionario-> prox == NULL) {
+		dicionario->prox = entry;
+		return;
+	}
 	for (Dict *p = dicionario; p != NULL; p = p->prox)
 		if (p->prox == NULL) {
 			p->prox = entry;
-			break;
+			return;
 		}
 }
 // Faz pesquisa no dicionário
@@ -53,7 +58,7 @@ char* decode(char *aux)
 		aux2[j] = aux[i];
 	aux2[j] = '\0';
 	
-	for (Dict *p = dicionario; p != NULL; p = p->prox)
+	for (Dict *p = dicionario->prox; p != NULL; p = p->prox)
 		if (strcmp(p->key, aux2) == 0)
 			return p->value;
 			

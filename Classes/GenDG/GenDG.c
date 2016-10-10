@@ -11,7 +11,7 @@ typedef struct inl {
 	int Norig;
 	struct inl *prox;
 } Inl;
-Inl *sttData;
+Inl **sttData;
 typedef struct aresta {
 	int orig, dest, depe;
 	struct aresta *prox;
@@ -25,11 +25,13 @@ Aresta *arestas;
 void inicializa2()
 {
 	Sinput = (char*)malloc(Ninput*sizeof(char));
-	sttData = (Inl*)malloc(Nstate*sizeof(Inl));
+	sttData = (Inl**)malloc(Nstate*sizeof(Inl));
 	arestas = (Aresta*)malloc(Nstate*sizeof(Aresta));
 	arestas->prox = NULL;
-	for (int j = 0; j<Nstate; j++)
-		sttData->prox = NULL;
+	for (int j = 0; j<Nstate; j++) {
+		sttData[j] = (Inl*)malloc(sizeof(Inl));
+		sttData[j]->prox = NULL;
+	}
 }
 //************************************/
 //*      Imprimindo o Grafo          */
@@ -53,8 +55,6 @@ void printTransition(int orig, int dest)
 			ar->prox = newAresta;
 			break;
 		}
-			
-	printf("S%d->S%d\n", orig, dest);
 }
 // Imprime uma nova dependência, se não for repetida
 void printDependencia(int orig, int dest, int depe)
@@ -71,8 +71,6 @@ void printDependencia(int orig, int dest, int depe)
 			ar->prox = newAresta;
 			break;
 		}
-			
-	printf("%sS%d->S%d [ label = \"S%d\" ];%s\n", KRED, orig, dest, depe, KWHT);
 }
 //************************************/
 //*        Análise do Grafo          */
@@ -83,7 +81,7 @@ void showTransitions(bool show)
 {
 	if (show == true)
 		for (int j = 0; j < Nstate; j++)
-			for (Inl *ptx = sttData[j].prox; ptx!=NULL; ptx = ptx->prox)
+			for (Inl *ptx = sttData[j]->prox; ptx!=NULL; ptx = ptx->prox)
 				printTransition(ptx->Norig, j);
 }
 // Mostra a dependência detectada
@@ -101,11 +99,11 @@ int countDependency(bool show)
 {
 	Inl *ptx, *pty;
 	for (int j = 0; j < Nstate; j++)
-		for (ptx = sttData[j].prox; ptx!=NULL; ptx = ptx->prox)
+		for (ptx = sttData[j]->prox; ptx!=NULL; ptx = ptx->prox)
 		{
 			strcpy(Sinput, ptx->in);
 			for (int k = 0; k < Nstate; k++)
-				for (pty = sttData[k].prox; pty!=NULL; pty = pty->prox)
+				for (pty = sttData[k]->prox; pty!=NULL; pty = pty->prox)
 					if (strcmp(pty->in, Sinput) == 0)
 						if (pty != ptx)
 							Dependencia(ptx->Norig, j, pty->Norig, k, show);
@@ -138,8 +136,8 @@ bool isTrans(char *linha){
 // Verifica se a transição já existe
 bool existTrans()
 {
-	for (Inl *ptx = sttData[Ndest].prox; ptx!=NULL; ptx = ptx->prox)
-		if (sttData[Ndest].Norig == Norig)
+	for (Inl *ptx = sttData[Ndest]->prox; ptx!=NULL; ptx = ptx->prox)
+		if (sttData[Ndest]->Norig == Norig)
 			if (strcmp(ptx->in, Sinput) == 0)
 				return true;
 	return false;
@@ -155,11 +153,11 @@ void addTrans()
 	newInl->Norig = Norig;
 	newInl->prox = NULL;
 	strcpy(newInl->in, Sinput);
-	if (sttData[Ndest].prox == NULL) {
-		sttData[Ndest].prox = newInl;
+	if (sttData[Ndest]->prox == NULL) {
+		sttData[Ndest]->prox = newInl;
 		return;
 	}
-	for (pt = sttData[Ndest].prox; pt->prox!=NULL; pt=pt->prox);
+	for (pt = sttData[Ndest]->prox; pt->prox!=NULL; pt=pt->prox);
 	pt->prox = newInl;
 }
 
