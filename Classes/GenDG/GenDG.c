@@ -41,7 +41,7 @@ void inicializa2()
 //*  http://graphs.grevian.org/graph/6175947048878080
 //************************************/
 // Imprime uma nova transição, se não houver dependência
-void printTransition(int orig, int dest)
+void printTransition(FILE *log, int orig, int dest, bool show)
 {
 	for (Aresta *ar = arestas->prox; ar != NULL; ar = ar->prox)
 		if (ar->orig == orig && ar->dest == dest)
@@ -55,9 +55,12 @@ void printTransition(int orig, int dest)
 			ar->prox = newAresta;
 			break;
 		}
+	fprintf(log, "%d->%d\n", orig, dest);
+	if (show == true)
+		printf("%d->%d\n", orig, dest); 
 }
 // Imprime uma nova dependência, se não for repetida
-void printDependencia(int orig, int dest, int depe)
+void printDependencia(FILE *log, int orig, int dest, int depe, bool show)
 {
 	for (Aresta *ar = arestas->prox; ar != NULL; ar = ar->prox)
 		if (ar->orig == orig && ar->dest == dest && ar->depe == depe)
@@ -71,31 +74,31 @@ void printDependencia(int orig, int dest, int depe)
 			ar->prox = newAresta;
 			break;
 		}
+		  
+	fprintf(log, "%d->%d [ label = \"%d\" ];\n", orig, dest, depe); 
+	if (show == true)
+		printf("%s%d->%d [ label = \"%d\" ];%s\n", KRED, orig, dest, depe, KWHT); 
 }
 //************************************/
 //*        Análise do Grafo          */
 //*     	de Dependência       	 */
 //************************************/
 // Mostra o DG construído a partir da leitura
-void showTransitions(bool show)
+void showTransitions(FILE *log, bool show)
 {
-	if (show == true)
-		for (int j = 0; j < Nstate; j++)
-			for (Inl *ptx = sttData[j]->prox; ptx!=NULL; ptx = ptx->prox)
-				printTransition(ptx->Norig, j);
+	for (int j = 0; j < Nstate; j++)
+		for (Inl *ptx = sttData[j]->prox; ptx!=NULL; ptx = ptx->prox)
+			printTransition(log, ptx->Norig, j, show);
 }
 // Mostra a dependência detectada
-void Dependencia(int origA, int destA, int origB, int destB, bool show)
+void Dependencia(FILE *log, int origA, int destA, int origB, int destB, bool show)
 {
 	Ndependencias++;
-	if (show == true)
-	{
-		printDependencia(origA, destA, origB);
-		printDependencia(origB, destB, origA);
-	}
+	printDependencia(log, origA, destA, origB, show);
+	printDependencia(log, origB, destB, origA, show);
 }
 // Para cada transição do DG, procura dependência
-int countDependency(bool show)
+int countDependency(FILE *log, bool show)
 {
 	Inl *ptx, *pty;
 	for (int j = 0; j < Nstate; j++)
@@ -106,7 +109,7 @@ int countDependency(bool show)
 				for (pty = sttData[k]->prox; pty!=NULL; pty = pty->prox)
 					if (strcmp(pty->in, Sinput) == 0)
 						if (pty != ptx)
-							Dependencia(ptx->Norig, j, pty->Norig, k, show);
+							Dependencia(log, ptx->Norig, j, pty->Norig, k, show);
 		}
 	return Ndependencias;
 }
@@ -316,15 +319,20 @@ void analyzeStatesKiss(char *Kiss_file, int *Nminstates)
 //*     Núcleo da Análise do GD      */
 //*     					         */
 //************************************/
-void analyzeGD(char *Kiss_file, bool show, int *Ndependencias)
+void analyzeGD(char *Kiss_file, char *Log_file, bool show, int *Ndependencias)
 {
-	if (show == true) printf("digraph {\n");
 	FILE *input = fopen (Kiss_file, "r");
+	FILE *log = fopen (Log_file, "w");
+	fprintf(log, "*** Dependency Graph (DG) ***\n\n");
+	fprintf(log, "Visual Graph on GraphViz: http://graphs.grevian.org/graph\n\n");
+	fprintf(log, "digraph {\n");
+	if (show == true) printf("digraph {\n");
 	checkFile(input, Kiss_file);
 	inicializa2();
 	readKiss(input);
-	*Ndependencias = countDependency(show);
-	showTransitions(show);
+	*Ndependencias = countDependency(log, show);
+	showTransitions(log, show);
+	fprintf(log, "}\n");
 	if (show == true) printf("}\n");
 	if (*Ndependencias == 0)
 		printf("%sNenhuma dependência detectada.\n%s",KRED,KWHT); 

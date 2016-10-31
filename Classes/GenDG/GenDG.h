@@ -4,7 +4,7 @@
 #ifndef GenDG_H
 #define GenDG_H
 
-void analyzeGD(char *Blif_file, bool show, int *Ndependencias);
+void analyzeGD(char *Blif_file, char *Log_file, bool show, int *Ndependencias);
 void analyzeStatesKiss(char *Kiss_file, int *Nminstates);
 void analyzeBlif(char *Blif_file, int *Nprodutos, int *Nliterais);
 void analyzeDefaultBlif(char *Blif_file, int *Nprodutos, int *Nliterais);
