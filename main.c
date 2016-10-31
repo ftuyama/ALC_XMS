@@ -198,7 +198,9 @@ int main(int arc, char** argv)
 	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	
 	getFileName();
-	sprintf(command, "mv ALC_XMS/ %s/", original);
+	sprintf(command, "rm -rf %s", original);
+	system (command);
+	sprintf(command, "mv ALC_XMS/ %s", original);
 	system (command);
 	
 	return 0;
