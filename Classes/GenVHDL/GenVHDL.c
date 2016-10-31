@@ -6,6 +6,11 @@
 char vhdlName[MAX];
 int Nin, Nout;
 int Ninput, Noutput, Nstt;
+/* Auxilliary variables */
+char ** inputList  = NULL;
+char ** outputList  = NULL;
+int inputListSize = 0;
+int outputListSize = 0;
 //************************************/
 //*      Construção da base do       */
 //*           arquivo VHDL		     */
@@ -85,6 +90,10 @@ void constructVHDL(FILE *input, FILE *output)
 	fclose(input);
 }
 
+//************************************/
+//*      Reportando equações 	     */
+//*       lógicas da MEFA    		 */
+//************************************/
 bool isMessy(char *linha) {
 	int j = 0;
 	for (; linha[j]!=' '; j++);
@@ -94,18 +103,69 @@ bool isMessy(char *linha) {
 	return false;
 }
 
-// Reporta as equações lógicas
-void reportEquations(char *blifFile, char *logFile)
+void parseInputSignals(char * signals) {
+	char * p  = strtok (signals, " ");
+	/* split string and append tokens to 'signals list' */
+	while (p && p[0] != '\n') {
+		inputList = realloc (inputList, sizeof (char*) * ++inputListSize);
+		if (inputList == NULL)
+			exit (-1); /* memory allocation failed */
+		inputList[inputListSize-1] = malloc(sizeof(char)*(strlen(p) + 1));
+		strcpy(inputList[inputListSize-1], p);
+		p = strtok (NULL, " ");
+	}
+}
+
+void parseOutputSignals(char * signals) {
+	char * p  = strtok (signals, " ");
+	/* split string and append tokens to 'signals list' */
+	while (p && p[0] != '\n') {
+		outputList = realloc (outputList, sizeof (char*) * ++outputListSize);
+		if (outputList == NULL)
+			exit (-1); /* memory allocation failed */
+		outputList[outputListSize-1] = malloc(sizeof(char)*(strlen(p) + 1));
+		strcpy(outputList[outputListSize-1], p);
+		p = strtok (NULL, " ");
+	}
+}
+
+// Lê os sinais da MEFA
+void readSignals(FILE *signal) 
+{
+	char linha[MAX], in[MAX], ou[MAX];
+	
+	/* Reading Signals */
+	while (fgets(linha , MAX , signal) != NULL)
+		if (strstr(linha, "#") != NULL)
+			break;
+	
+	fgets(linha , MAX , signal);
+	strcpy (in,linha);
+	parseInputSignals(in);
+	fgets(linha , MAX , signal);
+	strcpy (ou,linha);
+	parseOutputSignals(ou);
+}
+
+// Reporta as equações lógicas - Low Level
+void reportEquationsLow(FILE *input, FILE *output)
 {
 	int j;
 	char linha[MAX];
 	
-	FILE *input  = fopen (blifFile, "r");
-	FILE *output = fopen (logFile, "w");
-	checkFile(input, blifFile);
-	
+	/* Setting cursor */
 	fprintf(output, "*** Equações da MEFA ***\n\n");
 	parseBlif(input);
+	
+	/* Print the signals */
+	for (int i = 0; i < inputListSize; i++)
+	  fprintf (output, "%s ", inputList[i]);
+	fprintf (output, " [States]  [States] ");
+	for (int i = 0; i < outputListSize; i++)
+	  fprintf (output, "%s ", outputList[i]);
+	fprintf (output, "\n\n");
+	
+	/* Low Level Equation Description */
 	fgets(linha , MAX , input);
 	if (strstr(linha, ".p") != NULL)
 		fgets(linha , MAX , input);
@@ -121,7 +181,50 @@ void reportEquations(char *blifFile, char *logFile)
 		fprintf(output, "%.*s\n", (int)strlen(linha) - j - 2, linha + j + 1);
 		fgets(linha , MAX , input);
 	}
+}
+
+// Reporta as equações lógicas - High Level
+void reportEquationsHigh(FILE *input, FILE *output)
+{
+	int j;
+	char linha[MAX];
+	
+	/* Setting cursor */
+	fprintf(output, "\n\n");
+	rewind(input);
+	parseBlif(input);
+	
+	/* High Level Equation Description */
+	fgets(linha , MAX , input);
+	if (strstr(linha, ".p") != NULL)
+		fgets(linha , MAX , input);
+	while (isMessy(linha) == false) {
+		j = 0;
+		fprintf(output, "INPUT ");
+		for (int i = 0; i < strlen(linha); i++)
+			if (linha[i] == '~') linha[i] = '-';
+		fprintf(output, "%.*s", (int)(strchr(linha, ' ') - linha), linha);
+		for (; linha[j]!=' '; j++);
+		
+		fprintf(output, " OUTPUT ");
+		fprintf(output, "%.*s\n", (int)strlen(linha) - j - 2, linha + j + 1);
+		fgets(linha , MAX , input);
+	}
+}
+
+// Reporta as equações lógicas
+void reportEquations(char *blifFile, char *signalFile, char *logFile) {
+	FILE *input  = fopen (blifFile, "r");
+	FILE *signal  = fopen (signalFile, "r");
+	FILE *output = fopen (logFile, "w");
+	checkFile(input, blifFile);
+	checkFile(signal, signalFile);
+	readSignals(signal);
+	reportEquationsLow(input, output);
+	reportEquationsHigh(input, output);
 	fclose(input);
+	fclose(signal);
+	fclose(output);
 }
 
 void cropExtension(char* name)

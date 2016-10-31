@@ -662,8 +662,8 @@ void writeKiss(FILE *output)
 }
 
 //************************************/
-//*    Descreve sistema em formato   */
-//*    .kiss a partir da memória     */
+//*    Descreve ordem dos sinais     */
+//*         para a dada MEFA         */
 //************************************/
 void logSignalsOrder (char *XBM_file, FILE *log) {
 	fprintf(log, "*** Sinais para a MEFA %s ***\n\n", XBM_file);
@@ -677,6 +677,14 @@ void logSignalsOrder (char *XBM_file, FILE *log) {
 	for (in=In->prox; in!=NULL; in=in->prox)
 		if (in->tipo != 3) fprintf(log, "%s ", in->nome);
 	fprintf(log, "[Sinais de Entrada]     [Sinais de Entrada] ");
+	for (out=Out->prox; out!=NULL; out=out->prox)
+		fprintf(log, "%s ", out->nome);
+	fprintf(log, "\n\n\n#\n");
+	for (in=In->prox; in!=NULL; in=in->prox)
+		if (in->tipo == 3) fprintf(log, "%s ", in->nome);
+	for (in=In->prox; in!=NULL; in=in->prox)
+		if (in->tipo != 3) fprintf(log, "%s ", in->nome);
+	fprintf(log, "\n");
 	for (out=Out->prox; out!=NULL; out=out->prox)
 		fprintf(log, "%s ", out->nome);
 }
@@ -695,5 +703,6 @@ void GenKiss2 (char *XBM_file, char *Kiss_file, char *Log_file, bool useDDC)
 	readXBM (input);
 	writeKiss(output);
 	logSignalsOrder(XBM_file, log);
+	fclose(log);
 	//printREP();
 }

@@ -1,5 +1,19 @@
 *** Equações da MEFA ***
 
+cntgt1 ok fain dackn  [States]  [States] dreq frout 
+
+INPUT ---0-1- OUTPUT -1---
+INPUT --111-- OUTPUT 1--1-
+INPUT --1--1- OUTPUT -1---
+INPUT -1----1 OUTPUT --1--
+INPUT ---0--1 OUTPUT --1--
+INPUT --1---1 OUTPUT --1--
+INPUT 1--0--0 OUTPUT -1---
+INPUT -101--0 OUTPUT 1---1
+INPUT 0--0-0- OUTPUT --1--
+INPUT -001--- OUTPUT 1----
+
+
 INPUT ---0-1- OUTPUT -1---
 INPUT --111-- OUTPUT 1--1-
 INPUT --1--1- OUTPUT -1---

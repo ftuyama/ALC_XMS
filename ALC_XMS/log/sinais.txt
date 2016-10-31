@@ -7,3 +7,8 @@ Formato padrão para o arquivo blif:
 Para a MEFA:
 
 cntgt1 ok fain dackn [Sinais de Entrada]     [Sinais de Entrada] dreq frout 
+
+
+#
+cntgt1 ok fain dackn 
+dreq frout 
