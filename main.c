@@ -18,7 +18,8 @@
 int Nminstates = 0, Ndependencias = 0;
 int Nprodutos = 0, Nliterais = 0;
 int Ninput, Noutput;
-char fileName[MAX], name[MAX];
+char fileName[MAX], name[MAX], 
+	original[MAX], command[MAX];
 bool showDG = false;
 bool useDDC = false; 
 bool showStamina = false;
@@ -31,6 +32,7 @@ void getFilePath(char* name)
 	while(name[++i] != '.')
 		fileName[i] = name[i];
 	fileName[i] = '\0';
+	strcpy(original, fileName);
 }
 
 void getFileName()
@@ -80,6 +82,8 @@ int main(int arc, char** argv)
 	system ("mkdir -p ALC_XMS/log");
 	system ("mkdir -p ALC_XMS/blif");
 	system ("mkdir -p ALC_XMS/vhdl");
+	sprintf(command, "cp %s.nounc ALC_XMS/", fileName);
+	system (command);
 	
 	//*****************************************/
 	//* Converte especificação XBM -> Kiss2   */
@@ -192,6 +196,10 @@ int main(int arc, char** argv)
 	fileNameDot("", ".nounc");
 	writeLog("ALC_XMS/log/log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
+	
+	getFileName();
+	sprintf(command, "mv ALC_XMS/ %s/", original);
+	system (command);
 	
 	return 0;
 }
