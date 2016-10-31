@@ -190,6 +190,7 @@ int main(int arc, char** argv)
 	//*****************************************/
 	// Cria um arquivo Log com os resultados obtidos
 	fileNameDot("", ".nounc");
+	writeLog("ALC_XMS/log/log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	
 	return 0;
