@@ -186,7 +186,7 @@ void reportEquationsLow(FILE *input, FILE *output)
 // Reporta as equações lógicas - High Level
 void reportEquationsHigh(FILE *input, FILE *output)
 {
-	int j;
+	int index;
 	char linha[MAX];
 	
 	/* Setting cursor */
@@ -199,15 +199,39 @@ void reportEquationsHigh(FILE *input, FILE *output)
 	if (strstr(linha, ".p") != NULL)
 		fgets(linha , MAX , input);
 	while (isMessy(linha) == false) {
-		j = 0;
-		fprintf(output, "INPUT ");
-		for (int i = 0; i < strlen(linha); i++)
-			if (linha[i] == '~') linha[i] = '-';
-		fprintf(output, "%.*s", (int)(strchr(linha, ' ') - linha), linha);
-		for (; linha[j]!=' '; j++);
 		
-		fprintf(output, " OUTPUT ");
-		fprintf(output, "%.*s\n", (int)strlen(linha) - j - 2, linha + j + 1);
+		/* Output States */
+		for (int i = 0; linha[i] != ' '; i++)
+			index = i + 2;
+		for (int i = index; i < strlen(linha) - outputListSize - 1; i++)
+			if (linha[i] == '1')
+				fprintf(output, "state[%d],\t", i - index);
+			else if (linha[i] == '0')
+				fprintf(output, "state[%d]',\t", i - index);
+		
+		/* Outputs */
+		index = strlen(linha) - outputListSize - 1;
+		for (int i = index; i < strlen(linha); i++)
+			if (linha[i] == '1')
+				fprintf(output, "%s,\t", outputList[i - index]);
+		fprintf(output, "=\t");
+		
+		/* Inputs */
+		for (int i = 0; i < inputListSize; i++)
+			if (linha[i] == '1')
+				fprintf(output, "%s\t", inputList[i]);
+			else if (linha[i] == '0')
+				fprintf(output, "%s'\t", inputList[i]);
+				
+		/* Input States */
+		index = inputListSize;
+		for (int i = index; linha[i] != ' '; i++)
+			if (linha[i] == '1')
+				fprintf(output, "state[%d]\t", i - index);
+			else if (linha[i] == '0')
+				fprintf(output, "state[%d]'\t", i - index);
+				
+		fprintf(output, "\n");
 		fgets(linha , MAX , input);
 	}
 }

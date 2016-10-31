@@ -14,13 +14,13 @@ INPUT 0--0-0- OUTPUT --1--
 INPUT -001--- OUTPUT 1----
 
 
-INPUT ---0-1- OUTPUT -1---
-INPUT --111-- OUTPUT 1--1-
-INPUT --1--1- OUTPUT -1---
-INPUT -1----1 OUTPUT --1--
-INPUT ---0--1 OUTPUT --1--
-INPUT --1---1 OUTPUT --1--
-INPUT 1--0--0 OUTPUT -1---
-INPUT -101--0 OUTPUT 1---1
-INPUT 0--0-0- OUTPUT --1--
-INPUT -001--- OUTPUT 1----
+state[1],	=	dackn'	state[1]	
+state[0],	dreq,	=	fain	dackn	state[0]	
+state[1],	=	fain	state[1]	
+state[2],	=	ok	state[2]	
+state[2],	=	dackn'	state[2]	
+state[2],	=	fain	state[2]	
+state[1],	=	cntgt1	dackn'	state[2]'	
+state[0],	frout,	=	ok	fain'	dackn	state[2]'	
+state[2],	=	cntgt1'	dackn'	state[1]'	
+state[0],	=	ok'	fain'	dackn	
