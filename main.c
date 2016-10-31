@@ -99,8 +99,8 @@ int main(int arc, char** argv)
 	
 	printf("%s$ Minimização de Estados.%s\n", KYEL, KWHT);
 	if (showStamina == true)
-		system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
-	else system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2");
+		system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2 > ALC_XMS/log/min_states.txt 2>&1");
+	else system("stamina -v 1 -o ALC_XMS/kiss2/arquivo_min.kiss2 ALC_XMS/kiss2/arquivo.kiss2 > ALC_XMS/log/min_states.txt 2>&1");
 	analyzeStatesKiss("ALC_XMS/kiss2/arquivo_min.kiss2", &Nminstates);
 	printf ("> Nº Estados minimizados: %d\n", Nminstates);
 
