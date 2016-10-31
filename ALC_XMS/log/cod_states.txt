@@ -1,0 +1,4 @@
+# Codificação
+# States.S0 100
+# States.S1 010
+# States.S2 001

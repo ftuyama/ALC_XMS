@@ -4,6 +4,6 @@
 #ifndef GenBlif_H
 #define GenBlif_H
 
-void GenBlif(char *Kiss_file, char *Blif_file);
+void GenBlif(char *Kiss_file, char *Blif_file, char *Log_file);
 
 #endif

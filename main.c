@@ -127,12 +127,13 @@ int main(int arc, char** argv)
 	if (Ndependencias != 0 && sincAnalysis == false)
 	{
 		system("jedi -e h ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/kiss2/oneHot.blif"); 
-		GenBlif("ALC_XMS/kiss2/oneHot.blif", "ALC_XMS/blif/arquivo.blif"); 
+		GenBlif("ALC_XMS/kiss2/oneHot.blif", "ALC_XMS/blif/arquivo.blif", "ALC_XMS/log/cod_states.txt"); 
 		GenFunc("ALC_XMS/blif/arquivo.blif", "ALC_XMS/blif/FGC.blif", "ALC_XMS/blif/OUT.blif", "ALC_XMS/blif/NSTATE.blif");
 	}
 	// Assinalamento convencional usando JEDI
 	else
 	{
+		system("jedi -p ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/blif/arquivo.blif > ALC_XMS/log/cod_states.txt 2>&1");
 		system("jedi -p ALC_XMS/kiss2/arquivo_min.kiss2 >ALC_XMS/blif/arquivo.blif");
 		GenFunc("ALC_XMS/blif/arquivo.blif", "ALC_XMS/blif/FGC.blif", "ALC_XMS/blif/OUT.blif", "ALC_XMS/blif/NSTATE.blif");
 	}

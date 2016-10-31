@@ -172,14 +172,18 @@ void writeBlif(FILE *input, FILE *output)
 //*    	   do Kiss minimizado        */
 //************************************/
 // Gera arquivo .blif a partir de .kiss2 codificada
-void GenBlif(char *Kiss_file, char *Blif_file)
+void GenBlif(char *Kiss_file, char *Blif_file, char *Log_file)
 {
 	FILE *KISS = fopen (Kiss_file, "r");
 	FILE *BLIF = fopen (Blif_file, "w");
+	FILE *LOG  = fopen (Log_file, "w");
 
 	inicializa3();
 	readCodedKiss(KISS, BLIF);
 	writeBlif(KISS, BLIF);
+	
+	rewind(KISS);
+	readCodedKiss(KISS, LOG);
 	
 	fclose(KISS);
 	fclose(BLIF);
