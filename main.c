@@ -89,7 +89,7 @@ int main(int arc, char** argv)
 	
 	printf("%s$ Conversão XBM - KISS2.%s\n", KYEL, KWHT);
 	fileNameDot("", ".nounc");
-	GenKiss2(name, "ALC_XMS/kiss2/arquivo.kiss2", useDDC);
+	GenKiss2(name, "ALC_XMS/kiss2/arquivo.kiss2", "ALC_XMS/log/sinais.txt", useDDC);
 	
 	//*****************************************/
 	//*        Minimização de estados         */	

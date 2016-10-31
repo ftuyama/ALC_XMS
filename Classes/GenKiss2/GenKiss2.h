@@ -6,6 +6,6 @@
 
 void writeKiss(FILE *Kiss_output);
 void readXBM (FILE *XBM_input);
-void GenKiss2 (char *XBM_file, char *Kiss_file, bool useDDC);
+void GenKiss2 (char *XBM_file, char *Kiss_file, char *Log_file, bool useDDC);
 
 #endif

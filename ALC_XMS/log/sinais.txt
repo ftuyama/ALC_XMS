@@ -1,0 +1,9 @@
+*** Sinais para a MEFA biu-fifo2dma.nounc ***
+
+Formato padrão para o arquivo blif:
+[Entradas de nível][Entradas normais][Sinais de estado]   [Sinais de estado][Sinais de saída]
+
+
+Para a MEFA:
+
+cntgt1 ok fain dackn [Sinais de Entrada]     [Sinais de Entrada] dreq frout 

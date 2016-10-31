@@ -662,16 +662,38 @@ void writeKiss(FILE *output)
 }
 
 //************************************/
+//*    Descreve sistema em formato   */
+//*    .kiss a partir da memória     */
+//************************************/
+void logSignalsOrder (char *XBM_file, FILE *log) {
+	fprintf(log, "*** Sinais para a MEFA %s ***\n\n", XBM_file);
+	
+	fprintf(log, "Formato padrão para o arquivo blif:\n");
+	fprintf(log, "[Entradas de nível][Entradas normais][Sinais de estado]");
+	fprintf(log, "   [Sinais de estado][Sinais de saída]\n\n\n");
+	fprintf(log, "Para a MEFA:\n\n");
+	for (in=In->prox; in!=NULL; in=in->prox)
+		if (in->tipo == 3) fprintf(log, "%s ", in->nome);
+	for (in=In->prox; in!=NULL; in=in->prox)
+		if (in->tipo != 3) fprintf(log, "%s ", in->nome);
+	fprintf(log, "[Sinais de Entrada]     [Sinais de Entrada] ");
+	for (out=Out->prox; out!=NULL; out=out->prox)
+		fprintf(log, "%s ", out->nome);
+}
+
+//************************************/
 //*     Núcleo da conversão de       */
 //*      formato de arquivos         */
 //************************************/
-void GenKiss2 (char *XBM_file, char *Kiss_file, bool useDDC)
+void GenKiss2 (char *XBM_file, char *Kiss_file, char *Log_file, bool useDDC)
 {
 	FILE *input = fopen (XBM_file, "r");
 	FILE *output = fopen(Kiss_file, "w");
+	FILE *log = fopen(Log_file, "w");
 	checkFile(input, XBM_file);
 	inicializa(useDDC);
 	readXBM (input);
 	writeKiss(output);
+	logSignalsOrder(XBM_file, log);
 	//printREP();
 }
