@@ -1,0 +1,20 @@
+*** Equações da MEFA ***
+
+cntgt1 ok rin fain  [States]  [States] aout frout 
+
+INPUT -1--11 OUTPUT 1---
+INPUT -1-00- OUTPUT ---1
+INPUT 1-0--0 OUTPUT ---1
+INPUT 0----0 OUTPUT 1---
+INPUT --10-- OUTPUT 1-1-
+INPUT --0--- OUTPUT -1--
+INPUT ---1-- OUTPUT 11--
+
+
+state[0],	=	ok	state[0]	state[1]	
+frout,	=	ok	fain'	state[0]'	
+frout,	=	cntgt1	rin'	state[1]'	
+state[0],	=	cntgt1'	state[1]'	
+state[0],	aout,	=	rin	fain'	
+state[1],	=	rin'	
+state[0],	state[1],	=	fain	

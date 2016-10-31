@@ -1,0 +1,27 @@
+*** Solution for ALC_XMS/kiss2/arquivo.kiss2 ***
+
+state  0: (s6,s5,s2)
+state  1: (s4,s1,s0)
+state  2: (s3)
+
+Lap time1 0.00 sec for compatible
+Lap time2 0.00 sec for disjoint
+Lap time3 0.00 sec for iso
+Lap time4 0.00 sec for maximal
+Lap time5 0.00 sec for class & bound
+Lap time6 0.00 sec for prime
+Lap time7 0.00 sec for binate_cover
+Lap time8 0.00 sec for map
+Elapsed CPU Time 0.00 sec
+Mapping alternative in 0 product 0 total 0.000000 quality
+Number of shrinked states 0
+Number of input before disjoint 5
+Number of disjoint input 5
+Number of isomorphic states 0
+Number of compatible pairs 6
+Number of Maximal Compatibles 2
+Number of primes 2
+Number of initial states 7
+Number of incompatible states 1
+Number of products 11
+Number of states after minimization 3

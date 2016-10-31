@@ -1,0 +1,14 @@
+*** Sinais para a MEFA scsi-init-send-1.nounc ***
+
+Formato padrão para o arquivo blif:
+[Entradas de nível][Entradas normais][Sinais de estado]   [Sinais de estado][Sinais de saída]
+
+
+Para a MEFA:
+
+cntgt1 ok rin fain [Sinais de Entrada]     [Sinais de Entrada] aout frout 
+
+
+#
+cntgt1 ok rin fain 
+aout frout 

@@ -1,0 +1,11 @@
+*** Dependency Graph (DG) ***
+
+Visual Graph on GraphViz: http://graphs.grevian.org/graph
+
+digraph {
+1->0
+2->0
+0->1
+2->1
+0->2
+}
