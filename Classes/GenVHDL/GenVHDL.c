@@ -85,6 +85,45 @@ void constructVHDL(FILE *input, FILE *output)
 	fclose(input);
 }
 
+bool isMessy(char *linha) {
+	int j = 0;
+	for (; linha[j]!=' '; j++);
+	for (int i = j; i < strlen(linha); i++)
+		if (linha[i] == '0')
+			return true;
+	return false;
+}
+
+// Reporta as equações lógicas
+void reportEquations(char *blifFile, char *logFile)
+{
+	int j;
+	char linha[MAX];
+	
+	FILE *input  = fopen (blifFile, "r");
+	FILE *output = fopen (logFile, "w");
+	checkFile(input, blifFile);
+	
+	fprintf(output, "*** Equações da MEFA ***\n\n");
+	parseBlif(input);
+	fgets(linha , MAX , input);
+	if (strstr(linha, ".p") != NULL)
+		fgets(linha , MAX , input);
+	while (isMessy(linha) == false) {
+		j = 0;
+		fprintf(output, "INPUT ");
+		for (int i = 0; i < strlen(linha); i++)
+			if (linha[i] == '~') linha[i] = '-';
+		fprintf(output, "%.*s", (int)(strchr(linha, ' ') - linha), linha);
+		for (; linha[j]!=' '; j++);
+		
+		fprintf(output, " OUTPUT ");
+		fprintf(output, "%.*s\n", (int)strlen(linha) - j - 2, linha + j + 1);
+		fgets(linha , MAX , input);
+	}
+	fclose(input);
+}
+
 void cropExtension(char* name)
 {
 	int i = -1, j = -1;
