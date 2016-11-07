@@ -597,23 +597,20 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
-	fprintf(output, "  SIGNAL FGC    : STD_LOGIC_VECTOR(0 DOWNTO 0);\n");
+	fprintf(output, "  SIGNAL FGC    : STD_LOGIC;\n");
+	fprintf(output, "  SIGNAL S_FGC  : STD_LOGIC;\n\n");
 	
-	fprintf(output, "  SIGNAL S_FGC  : STD_LOGIC;\n");
+	fprintf(output, "BEGIN\n\n");
 	
-	fprintf(output, "\nBEGIN\n");
-	
-	fprintf(output, "S_FGC <= FGC(0);\n\n");
-	
-	
-	fprintf(output, "B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC(0));\n");
+	fprintf(output, "DELAY: V_PULSE   PORT MAP(FGC, S_FGC);\n");
+	fprintf(output, "B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC);\n");
 	fprintf(output, "B2: NSTATE_Block PORT MAP(INPUT & SSTATE, SNSTATE);\n");
 	fprintf(output, "B3: OUT_Block    PORT MAP(INPUT & SSTATE, SOUT);\n");
 
 	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "STT%d: D_Latch    PORT MAP(FGC(0), SNSTATE(%d), SSTATE(%d));\n", i, i, i);
+		fprintf(output, "STT%d: D_Latch0    PORT MAP(S_FGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, i, i);
 	for (int i = 0; i < Noutput; i++)
-		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), SSOUT(%d));\n", i, i, i, i, i);
+		fprintf(output, "OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
 	
 	fprintf(output, " \n  PROCESS(INPUT)\n");
 	fprintf(output, "  BEGIN\n");
