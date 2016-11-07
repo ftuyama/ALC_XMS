@@ -333,6 +333,51 @@ void GenDLatchVHDL(char *DLatch_file)
 	fprintf(output, "end Behavioral;\n");
 }
 
+void GenVPulseVHDL(char *VPulse_file)
+{
+	FILE *output  = fopen (VPulse_file, "w");
+	fprintf(output, "library IEEE;\n");
+	fprintf(output, "use IEEE.STD_LOGIC_1164.ALL;\n\n");
+	fprintf(output, "entity V_Pulse is\n");
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    i : in  STD_LOGIC;\n");
+	fprintf(output, "    o : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "end V_Pulse;\n\n");
+	fprintf(output, "architecture Behavioral of V_Pulse is\n\n");
+	fprintf(output, "signal s0,s1,s2,s4,s5: std_logic;\n\n");
+	
+	fprintf(output, "begin\n\n");
+	
+	fprintf(output, "s0<= '1';   \n");
+	fprintf(output, "process (s0,s2,i)\n");
+	fprintf(output, "begin\n");
+	fprintf(output, "	if s2 = '0' then\n");
+	fprintf(output, "	s1<='0';\n");
+	fprintf(output, "	elsif s0 = '0' then\n");
+	fprintf(output, "	s1<='1';\n");
+	fprintf(output, "	elsif rising_edge(i) then\n");
+	fprintf(output, "	s1 <= s0;\n");
+	fprintf(output, "	end if;\n");
+	fprintf(output, "end process;\n\n");
+	
+	fprintf(output, "s2<= not s1;   \n");
+	fprintf(output, "process (s0,s2,s5)\n");
+	fprintf(output, "begin\n");
+	fprintf(output, "	if s5 = '0' then\n");
+	fprintf(output, "	s4<='0';\n");
+	fprintf(output, "	elsif s0 = '0' then\n");
+	fprintf(output, "	s4<='1';\n");
+	fprintf(output, "	elsif rising_edge(s2) then\n");
+	fprintf(output, "	s4 <= s0;\n");
+	fprintf(output, "	end if;\n");
+	fprintf(output, "end process;\n\n");
+	
+	fprintf(output, "s5 <= not(s4);\n");
+	fprintf(output, "o <= s4;\n\n");
+	fprintf(output, "end Behavioral;\n");
+}
+
 void constructMasterVHDL(FILE *output)
 {
 	fprintf(output, "library IEEE;\n");

@@ -176,6 +176,7 @@ int main(int arc, char** argv)
 	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
 	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch.vhdl");
+	GenVPulseVHDL("ALC_XMS/vhdl/V_Pulse.vhdl");
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");

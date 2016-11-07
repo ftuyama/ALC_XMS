@@ -6,6 +6,7 @@
 
 void GenVHDL(char *Blif_file, char *Vhdl_file);
 void GenDLatchVHDL(char *DLatch_file);
+void GenVPulseVHDL(char *VPulse_file);
 void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug);
 void reportEquations(char *blifFile, char *signalFile, char *logFile);
 
