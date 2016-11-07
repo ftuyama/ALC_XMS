@@ -310,27 +310,37 @@ void parseKiss(FILE *input)
 	fclose(input);
 }
 
-void GenDLatchVHDL(char *DLatch_file)
+void GenDLatchVHDLwithI(char *DLatch_file, int i)
 {
 	FILE *output  = fopen (DLatch_file, "w");
 	fprintf(output, "library IEEE;\n");
 	fprintf(output, "use IEEE.STD_LOGIC_1164.ALL;\n\n");
-	fprintf(output, "entity D_Latch is\n");
+	fprintf(output, "entity D_Latch%d is\n", i);
 	fprintf(output, "  Port (\n");
 	fprintf(output, "    EN : in  STD_LOGIC;\n");
 	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    rst: in  STD_LOGIC;\n");
 	fprintf(output, "    Q  : out STD_LOGIC\n");
 	fprintf(output, "  );\n");
-	fprintf(output, "end D_Latch;\n\n");
-	fprintf(output, "architecture Behavioral of D_Latch is\n");
+	fprintf(output, "end D_Latch%d;\n\n", i);
+	fprintf(output, "architecture Behavioral of D_Latch%d is\n\n", i);
 	fprintf(output, "begin\n");
-	fprintf(output, "process(EN, D)\n");
+	fprintf(output, "process(EN, rst, D)\n");
 	fprintf(output, "begin\n");
-	fprintf(output, "  if (EN = '1') then\n");
+	fprintf(output, "  if (rst = '0') then\n");
+	fprintf(output, "    Q <= '%d';\n", i);
+	fprintf(output, "  elsif (EN = '1') then\n");
 	fprintf(output, "    Q <= D;\n");
 	fprintf(output, "  end if;\n");
-	fprintf(output, "end process;\n");
+	fprintf(output, "end process;\n\n");
 	fprintf(output, "end Behavioral;\n");
+}
+
+
+void GenDLatchVHDL(char *DLatch0_file, char *DLatch1_file)
+{
+	GenDLatchVHDLwithI(DLatch0_file, 0);
+	GenDLatchVHDLwithI(DLatch1_file, 1);
 }
 
 void GenVPulseVHDL(char *VPulse_file)
@@ -527,7 +537,10 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "\n");
 	fprintf(output, "ENTITY %s IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
+	fprintf(output, "    RESET  : IN  STD_LOGIC;\n");
 	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "    STATE  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "    NSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END ENTITY %s;\n", vhdlName);
@@ -555,11 +568,28 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 	
-	fprintf(output, "COMPONENT D_Latch IS\n");
+	fprintf(output, "COMPONENT D_Latch0 IS\n");
 	fprintf(output, "  Port (\n");
 	fprintf(output, "    EN : in  STD_LOGIC;\n");
 	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    rst: in  STD_LOGIC;\n");
 	fprintf(output, "    Q  : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+	
+	fprintf(output, "COMPONENT D_Latch1 IS\n");
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    EN : in  STD_LOGIC;\n");
+	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    rst: in  STD_LOGIC;\n");
+	fprintf(output, "    Q  : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "END COMPONENT;\n\n");
+	
+	fprintf(output, "COMPONENT V_Pulse IS\n");
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    i  : in  STD_LOGIC;\n");
+	fprintf(output, "    o  : out STD_LOGIC\n");
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 
@@ -569,7 +599,12 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  SIGNAL FGC    : STD_LOGIC_VECTOR(0 DOWNTO 0);\n");
 	
+	fprintf(output, "  SIGNAL S_FGC  : STD_LOGIC;\n");
+	
 	fprintf(output, "\nBEGIN\n");
+	
+	fprintf(output, "S_FGC <= FGC(0);\n\n");
+	
 	
 	fprintf(output, "B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC(0));\n");
 	fprintf(output, "B2: NSTATE_Block PORT MAP(INPUT & SSTATE, SNSTATE);\n");
