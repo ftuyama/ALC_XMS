@@ -537,10 +537,16 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "\n");
 	fprintf(output, "ENTITY %s IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
-	fprintf(output, "    RESET  : IN  STD_LOGIC;\n");
+	fprintf(output, "    RESET  : IN  STD_LOGIC;\n    ");
+	for (int i = 0; i < Ninput; i++)
+		if (i == Ninput - 1) fprintf(output, "%s : in std_logic;\n", inputList[i]);
+		else fprintf(output, "%s, ", inputList[i]);
 	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "    STATE  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
-	fprintf(output, "    NSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "    NSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n    ", (Nstt - 1));
+	for (int i = 0; i < Noutput; i++)
+		if (i == Noutput - 1) fprintf(output, "%s : out std_logic;\n", outputList[i]);
+		else fprintf(output, "%s, ", outputList[i]);
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END ENTITY %s;\n", vhdlName);
@@ -597,26 +603,40 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL SFGC   : STD_LOGIC;\n\n");
 	fprintf(output, "  SIGNAL FGC    : STD_LOGIC;\n");
-	fprintf(output, "  SIGNAL S_FGC  : STD_LOGIC;\n\n");
 	
 	fprintf(output, "BEGIN\n\n");
 	
-	fprintf(output, "DELAY: V_PULSE   PORT MAP(FGC, S_FGC);\n");
-	fprintf(output, "B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC);\n");
-	fprintf(output, "B2: NSTATE_Block PORT MAP(INPUT & SSTATE, SNSTATE);\n");
-	fprintf(output, "B3: OUT_Block    PORT MAP(INPUT & SSTATE, SOUT);\n");
+	/* Inputs do VHDL */
+	fprintf(output, "  -- Ordem dos inputs\n");
+	fprintf(output, "  INPUT <= ");
+	for (int i = 0; i < Ninput; i++)
+		if (i == Ninput - 1) fprintf(output, "%s;\n\n", inputList[i]);
+		else fprintf(output, "%s & ", inputList[i]);
+	
+	/* States do VHDL */
+	fprintf(output, "  STATE <= SSTATE\n");
+	fprintf(output, "  SNSTATE <= SNSTATE\n\n");
+	
+	/* Linkando blocos */
+	fprintf(output, "  DELAY: V_PULSE    PORT MAP(FGC, SFGC);\n");
+	fprintf(output, "  B1: FGC_Block     PORT MAP(INPUT & SSTATE, FGC);\n");
+	fprintf(output, "  B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);\n");
+	fprintf(output, "  B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);\n\n");
 
+	/* Linkando Latches */
 	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "STT%d: D_Latch0    PORT MAP(S_FGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, i, i);
+		fprintf(output, "  STT%d: D_Latch0    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, i, i);
 	for (int i = 0; i < Noutput; i++)
-		fprintf(output, "OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
+		fprintf(output, "  OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
 	
-	fprintf(output, " \n  PROCESS(INPUT)\n");
-	fprintf(output, "  BEGIN\n");
-	fprintf(output, "    OUTPUT <= SSOUT;\n");
-	fprintf(output, "  END PROCESS;\n");
-	
+	/* Outputs do VHDL */
+	fprintf(output, "  -- Ordem dos outputs");
+	for (int i = 0; i < Noutput; i++)
+		fprintf(output, "\n  %s <= SSOUT(%d);", outputList[i], i);
+	fprintf(output, "\n  OUTPUT <= SSOUT;\n\n");
+
 	fprintf(output, "END ALC_XMS;\n");
 }
 

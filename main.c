@@ -172,6 +172,7 @@ int main(int arc, char** argv)
 	// Input: Eq. Booleanas @ Output: Códigos VHDL
 
 	printf("%s$ Conversão para VHDL.%s\n", KYEL, KWHT);
+	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
 	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
@@ -181,7 +182,6 @@ int main(int arc, char** argv)
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
 	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, false, debugMode);
-	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");

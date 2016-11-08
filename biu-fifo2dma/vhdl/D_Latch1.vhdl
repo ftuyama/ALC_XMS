@@ -8,9 +8,10 @@ entity D_Latch1 is
     rst: in  STD_LOGIC;
     Q  : out STD_LOGIC
   );
-end D_Latch1 ;
+end D_Latch1;
 
-architecture Behavioral of D_Latch1  is
+architecture Behavioral of D_Latch1 is
+
 begin
 process(EN, rst, D)
 begin
@@ -20,4 +21,5 @@ begin
     Q <= D;
   end if;
 end process;
+
 end Behavioral;
