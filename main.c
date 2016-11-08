@@ -71,7 +71,7 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("biu-fifo2dma.nounc");
+	else getFilePath("ALU2.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
@@ -172,15 +172,16 @@ int main(int arc, char** argv)
 	// Input: Eq. Booleanas @ Output: Códigos VHDL
 
 	printf("%s$ Conversão para VHDL.%s\n", KYEL, KWHT);
+	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
 	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
 	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
-	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch.vhdl");
+	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch0.vhdl", "ALC_XMS/vhdl/D_Latch1.vhdl");
+	GenVPulseVHDL("ALC_XMS/vhdl/V_Pulse.vhdl");
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", name, false, debugMode);
-	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
+	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/blif/arquivo.blif", name, false, debugMode);
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");
