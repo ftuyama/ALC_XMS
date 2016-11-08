@@ -633,7 +633,7 @@ void constructOptimizedVHDL(FILE *output)
 	/* Outputs do VHDL */
 	fprintf(output, "\n  -- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n  %s <= SSOUT(%d);", outputList[i], i);
+		fprintf(output, "\n  %s <= SSOUT(%d);", outputList[Noutput - i - 1], i);
 
 	fprintf(output, "\n\nEND ALC_XMS;\n");
 }
@@ -693,7 +693,7 @@ void constructOptimizedSyncVHDL(FILE *output)
 	/* Outputs do VHDL */
 	fprintf(output, "\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n    	%s <= SOUT(%d);", outputList[i], i);
+		fprintf(output, "\n    	%s <= SOUT(%d);", outputList[Noutput - i - 1], i);
 	fprintf(output, "\n    END IF;\n");
 	fprintf(output, "  END PROCESS;\n");
 	

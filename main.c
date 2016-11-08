@@ -71,7 +71,7 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("biu-fifo2dma.nounc");
+	else getFilePath("ALU2.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
