@@ -541,13 +541,11 @@ void constructOptimizedVHDL(FILE *output)
 	for (int i = 0; i < Ninput; i++)
 		if (i == Ninput - 1) fprintf(output, "%s : in std_logic;\n", inputList[i]);
 		else fprintf(output, "%s, ", inputList[i]);
-	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "    STATE  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "    NSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n    ", (Nstt - 1));
 	for (int i = 0; i < Noutput; i++)
-		if (i == Noutput - 1) fprintf(output, "%s : out std_logic;\n", outputList[i]);
+		if (i == Noutput - 1) fprintf(output, "%s : out std_logic\n", outputList[i]);
 		else fprintf(output, "%s, ", outputList[i]);
-	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0)\n", (Noutput - 1));
 	fprintf(output, "  );\n");
 	fprintf(output, "END ENTITY %s;\n", vhdlName);
 	fprintf(output, "\n");
@@ -599,11 +597,12 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 
+	fprintf(output, "  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
-	fprintf(output, "  SIGNAL SFGC   : STD_LOGIC;\n\n");
+	fprintf(output, "  SIGNAL SFGC   : STD_LOGIC;\n");
 	fprintf(output, "  SIGNAL FGC    : STD_LOGIC;\n");
 	
 	fprintf(output, "BEGIN\n\n");
@@ -632,12 +631,11 @@ void constructOptimizedVHDL(FILE *output)
 		fprintf(output, "  OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
 	
 	/* Outputs do VHDL */
-	fprintf(output, "  -- Ordem dos outputs");
+	fprintf(output, "\n  -- Ordem dos outputs");
 	for (int i = 0; i < Noutput; i++)
 		fprintf(output, "\n  %s <= SSOUT(%d);", outputList[i], i);
-	fprintf(output, "\n  OUTPUT <= SSOUT;\n\n");
 
-	fprintf(output, "END ALC_XMS;\n");
+	fprintf(output, "\n\nEND ALC_XMS;\n");
 }
 
 void constructOptimizedSyncVHDL(FILE *output)
@@ -649,6 +647,9 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "ENTITY %s IS\n", vhdlName);
 	fprintf(output, "  PORT (\n");
 	fprintf(output, "    INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	for (int i = 0; i < Ninput; i++)
+		if (i == Ninput - 1) fprintf(output, "%s : in std_logic;\n", inputList[i]);
+		else fprintf(output, "%s, ", inputList[i]);
 	fprintf(output, "    OUTPUT : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "    RESET  : IN  STD_LOGIC;\n");
 	fprintf(output, "    CLOCK  : IN  STD_LOGIC\n");

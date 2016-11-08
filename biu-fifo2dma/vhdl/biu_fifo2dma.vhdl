@@ -6,11 +6,9 @@ ENTITY biu_fifo2dma IS
   PORT (
     RESET  : IN  STD_LOGIC;
     cntgt1, ok, fain, dackn : in std_logic;
-    INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
     STATE  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
     NSTATE : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-    dreq, frout : out std_logic;
-    OUTPUT : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+    dreq, frout : out std_logic
   );
 END ENTITY biu_fifo2dma;
 
@@ -62,6 +60,7 @@ COMPONENT V_Pulse IS
   );
 END COMPONENT;
 
+  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
   SIGNAL SSTATE : STD_LOGIC_VECTOR(2 DOWNTO 0);
   SIGNAL SNSTATE: STD_LOGIC_VECTOR(2 DOWNTO 0);
   SIGNAL SSOUT  : STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -88,8 +87,7 @@ BEGIN
   OUT0: D_Latch0    PORT MAP(SSOUT(0) XOR SOUT(0), SOUT(0), RESET, SSOUT(0));
   OUT1: D_Latch0    PORT MAP(SSOUT(1) XOR SOUT(1), SOUT(1), RESET, SSOUT(1));
   -- Ordem dos outputs
-
   dreq <= SSOUT(0);
   frout <= SSOUT(1);
-  OUTPUT <= SSOUT;
+
 END ALC_XMS;

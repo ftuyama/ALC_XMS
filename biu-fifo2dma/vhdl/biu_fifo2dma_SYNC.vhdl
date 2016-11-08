@@ -5,6 +5,7 @@ use IEEE.NUMERIC_STD.all;
 ENTITY biu_fifo2dma_SYNC IS
   PORT (
     INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
+cntgt1, ok, fain, dackn : in std_logic;
     OUTPUT : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
     RESET  : IN  STD_LOGIC;
     CLOCK  : IN  STD_LOGIC
