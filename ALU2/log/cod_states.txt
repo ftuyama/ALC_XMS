@@ -1,0 +1,10 @@
+# Codificação
+# States.S0 100000000
+# States.S5 010000000
+# States.S1 001000000
+# States.S2 000100000
+# States.S3 000010000
+# States.S4 000001000
+# States.S8 000000100
+# States.S7 000000010
+# States.S6 000000001

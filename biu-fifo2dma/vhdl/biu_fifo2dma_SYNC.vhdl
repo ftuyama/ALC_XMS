@@ -4,10 +4,10 @@ use IEEE.NUMERIC_STD.all;
 
 ENTITY biu_fifo2dma_SYNC IS
   PORT (
-    INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
-    OUTPUT : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+    cntgt1, ok, fain, dackn : in std_logic;
     RESET  : IN  STD_LOGIC;
-    CLOCK  : IN  STD_LOGIC
+    CLOCK  : IN  STD_LOGIC;
+    dreq, frout : out std_logic
   );
 END ENTITY biu_fifo2dma_SYNC;
 
@@ -20,17 +20,28 @@ COMPONENT biu_fifo2dma_SYNC_Block IS
   );
 END COMPONENT;
 
+  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
   SIGNAL SSTATE : STD_LOGIC_VECTOR(2 DOWNTO 0);
   SIGNAL SOUT   : STD_LOGIC_VECTOR(4 DOWNTO 0);
 
 BEGIN
-B: biu_fifo2dma_SYNC_Block    PORT MAP(INPUT & SSTATE, SOUT);
+  -- Ordem dos inputs
+  INPUT <= cntgt1 & ok & fain & dackn;
+
+  B: biu_fifo2dma_SYNC_Block    PORT MAP(INPUT & SSTATE, SOUT);
  
-  PROCESS(CLOCK)
+  PROCESS(CLOCK, RESET)
   BEGIN
-    IF (RISING_EDGE(CLOCK)) THEN
+    IF (RST = '0') THEN
+
+    	-- Ordem dos outputs
+    	frout <= '0';
+    	dreq <= '0';    ELSIF (RISING_EDGE(CLOCK)) THEN
     	SSTATE <= SOUT(4 DOWNTO 2);
-    	OUTPUT <= SOUT(1 DOWNTO 0);
+
+    	-- Ordem dos outputs
+    	frout <= SOUT(1);
+    	dreq <= SOUT(0);
     END IF;
   END PROCESS;
 END ALC_XMS;
