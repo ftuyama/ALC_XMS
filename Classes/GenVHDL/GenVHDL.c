@@ -3,8 +3,8 @@
 #include <string.h>
 #include "../tools/tools.h"
 
-char vhdlName[MAX];
-int Nin, Nout;
+char vhdlName[MAX], iCod[MAX];
+int Nin, Nout, iState;
 int Ninput, Noutput, Nstt;
 /* Auxilliary variables */
 char ** inputList  = NULL;
@@ -43,23 +43,6 @@ void constructVHDLBottom(FILE *output)
 	fprintf(output, "END version;\n");
 }
 
-// Lê informações do arquivo blif
-void parseBlif(FILE *input) 
-{
-	char linha[MAX];
-	do
-	{
-		fgets(linha , MAX , input);
-		if (strstr(linha, ".ob") != NULL);
-		else if (strstr(linha, ".ilb") != NULL);
-		else if (strstr(linha, ".i") != NULL)
-			Nin  = nextNumber(0,linha);
-		else if (strstr(linha, ".o") != NULL)  
-			Nout = nextNumber(0,linha);
-	} while (strstr(linha, ".ob") == NULL 
-			&& strstr(linha, ".p") == NULL);
-}
-
 // Constrói o núcleo VHDL
 void constructVHDL(FILE *input, FILE *output)
 {
@@ -91,8 +74,8 @@ void constructVHDL(FILE *input, FILE *output)
 }
 
 //************************************/
-//*      Reportando equações 	     */
-//*       lógicas da MEFA    		 */
+//*     Parsers de informações	     */
+//*       referentes à MEFA   		 */
 //************************************/
 bool isMessy(char *linha) {
 	int j = 0;
@@ -128,6 +111,60 @@ void parseOutputSignals(char * signals) {
 		p = strtok (NULL, " ");
 	}
 }
+
+// Lê informações do arquivo blif
+void parseBlif(FILE *input) 
+{
+	char linha[MAX];
+	do
+	{
+		fgets(linha , MAX , input);
+		if (strstr(linha, ".ob") != NULL);
+		else if (strstr(linha, ".ilb") != NULL);
+		else if (strstr(linha, ".i") != NULL)
+			Nin  = nextNumber(0,linha);
+		else if (strstr(linha, ".o") != NULL)  
+			Nout = nextNumber(0,linha);
+	} while (strstr(linha, ".ob") == NULL 
+			&& strstr(linha, ".p") == NULL);
+}
+
+// Lê informações do arquivo kiss
+void parseKiss(FILE *input) 
+{
+	char linha[MAX];
+	do
+	{
+		fgets(linha , MAX , input);
+		if (strstr(linha, ".i") != NULL)
+			Ninput  = nextNumber(0,linha);
+		if (strstr(linha, ".o") != NULL)  
+			Noutput = nextNumber(0,linha);
+		if (strstr(linha, ".r") != NULL)  
+			iState = nextNumber(0,linha);
+	} while (strstr(linha, ".r") == NULL);
+	Nstt = Nin - Ninput;
+	fclose(input);
+}
+
+// Lê informações de codificação
+void parseCode(FILE *input) 
+{
+	char linha[MAX];
+	while(fgets(input, MAX, linha) != NULL)
+		if (strstr(linha, "# State") != NULL) {
+			int state = nextNumber(0,linha);
+			if (state == iState) {
+				iCod = 
+			}
+		}
+	fclose(input);
+}
+
+//************************************/
+//*      Reportando equações 	     */
+//*       lógicas da MEFA    		 */
+//************************************/
 
 // Lê os sinais da MEFA
 void readSignals(FILE *signal) 
@@ -293,22 +330,6 @@ void GenVHDL(char *Blif_file, char *Vhdl_file)
 //*      Junta as partes VHDL	     */
 //*       em um único arquivo		 */
 //************************************/
-
-// Lê informações do arquivo kiss
-void parseKiss(FILE *input) 
-{
-	char linha[MAX];
-	do
-	{
-		fgets(linha , MAX , input);
-		if (strstr(linha, ".i") != NULL)
-			Ninput  = nextNumber(0,linha);
-		if (strstr(linha, ".o") != NULL)  
-			Noutput = nextNumber(0,linha);
-	} while (strstr(linha, ".p") == NULL);
-	Nstt = Nin - Ninput;
-	fclose(input);
-}
 
 void GenDLatchVHDL(char *DLatch_file)
 {
@@ -584,16 +605,19 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "END ALC_XMS;\n");
 }
 
-void assembleVHDL(char *Kiss_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug)
+void assembleVHDL(char *Kiss_file, char *Code_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug)
 {
 	FILE *BLIF_IN  = fopen (Blif_file, "r");
+	FILE *CODE_IN  = fopen (Code_file, "r");
 	FILE *KISS_IN  = fopen (Kiss_file, "r");
 	FILE *VHDL_OUT = fopen (Vhdl_file, "w");
 	
 	checkFile(BLIF_IN, Blif_file);
+	checkFile(CODE_IN, Kiss_file);
 	checkFile(KISS_IN, Kiss_file);
 	cropExtension(Vhdl_file);
 	parseBlif(BLIF_IN);
+	parseCode(CODE_IN);
 	parseKiss(KISS_IN);
 	
 	if (debug == true) {
