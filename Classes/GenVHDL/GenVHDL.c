@@ -373,11 +373,36 @@ void GenDLatchVHDLwithI(char *DLatch_file, int i)
 	fprintf(output, "end Behavioral;\n");
 }
 
-
-void GenDLatchVHDL(char *DLatch0_file, char *DLatch1_file)
+void GenDLatchVHDLNeutral(char *DLatch_file)
 {
-	GenDLatchVHDLwithI(DLatch0_file, 0);
-	GenDLatchVHDLwithI(DLatch1_file, 1);
+	FILE *output  = fopen (DLatch_file, "w");
+	fprintf(output, "library IEEE;\n");
+	fprintf(output, "use IEEE.STD_LOGIC_1164.ALL;\n\n");
+	fprintf(output, "entity D_Latch%d is\n", i);
+	fprintf(output, "  Port (\n");
+	fprintf(output, "    EN : in  STD_LOGIC;\n");
+	fprintf(output, "    D  : in  STD_LOGIC;\n");
+	fprintf(output, "    Q  : out STD_LOGIC\n");
+	fprintf(output, "  );\n");
+	fprintf(output, "end D_Latch%d;\n\n", i);
+	fprintf(output, "architecture Behavioral of D_Latch%d is\n\n", i);
+	fprintf(output, "begin\n");
+	fprintf(output, "process(EN, D)\n");
+	fprintf(output, "begin\n");
+	fprintf(output, "  if (EN = '1') then\n");
+	fprintf(output, "    Q <= D;\n");
+	fprintf(output, "  end if;\n");
+	fprintf(output, "end process;\n\n");
+	fprintf(output, "end Behavioral;\n");
+}
+
+
+void GenDLatchVHDL(char *DLatch0_file, char *DLatch1_file, char *DLatch_file)
+{
+	if (debug == false) {
+		GenDLatchVHDLwithI(DLatch0_file, 0);
+		GenDLatchVHDLwithI(DLatch1_file, 1);
+	} else GenDLatchVHDLNeutral(DLatch_file);
 }
 
 void GenVPulseVHDL(char *VPulse_file)
@@ -663,7 +688,7 @@ void constructOptimizedVHDL(FILE *output)
 
 	/* Linkando Latches */
 	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "  STT%d: D_Latch0    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, i, i);
+		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", iCode[i], i, i, i);
 	for (int i = 0; i < Noutput; i++)
 		fprintf(output, "  OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
 	
@@ -725,6 +750,10 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
 		fprintf(output, "\n    	%s <= '0';", outputList[i]);
+	fprintf(output, "\n     SSTATE <= \'");
+	for (int i = Nstate - 1; i >= 0; i--)
+		fprintf(output, "%d", iCode[i]);
+	fprintf(output, "\'\n");
 	fprintf(output, "    ELSIF (RISING_EDGE(CLOCK)) THEN\n");
 	fprintf(output, "    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
 	/* Outputs do VHDL */
