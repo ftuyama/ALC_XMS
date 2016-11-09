@@ -152,11 +152,11 @@ void parseCode(FILE *input)
 {
 	char linha[MAX];
 	while(fgets(input, MAX, linha) != NULL)
-		if (strstr(linha, "# State") != NULL) {
-			int state = nextNumber(0,linha);
-			if (state == iState) {
-				iCod = 
-			}
+		if (strstr(linha, "# State") != NULL && iState == nextNumber(0, linha)) {
+			int j = 0, i = strlen(linha);
+			while (linha[--i] != ' ');
+			while (i < strlen(linha))
+				iCod[j++] = linha[i++]; 
 		}
 	fclose(input);
 }
