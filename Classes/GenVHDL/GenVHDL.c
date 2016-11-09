@@ -397,7 +397,7 @@ void GenDLatchVHDLNeutral(char *DLatch_file)
 }
 
 
-void GenDLatchVHDL(char *DLatch0_file, char *DLatch1_file, char *DLatch_file)
+void GenDLatchVHDL(char *DLatch0_file, char *DLatch1_file, char *DLatch_file, bool debug)
 {
 	if (debug == false) {
 		GenDLatchVHDLwithI(DLatch0_file, 0);
