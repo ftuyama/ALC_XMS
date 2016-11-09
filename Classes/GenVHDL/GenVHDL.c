@@ -4,7 +4,7 @@
 #include "../tools/tools.h"
 
 char vhdlName[MAX], iCod[MAX];
-int Nin, Nout, iState;
+int Nin, Nout, iState, iOut[MAX];
 int Ninput, Noutput, Nstt;
 /* Auxilliary variables */
 char ** inputList  = NULL;
@@ -158,6 +158,17 @@ void parseCode(FILE *input)
 			while (i < strlen(linha))
 				iCod[j++] = linha[i++]; 
 		}
+	fclose(input);
+}
+
+// Lê informações da especificação
+void parseXBM(FILE *input) 
+{
+	int i = 0;
+	char linha[MAX];
+	while(fgets(input, MAX, linha) != NULL && (linha[0]=='0' || linha[0]=='1'))
+		if (strstr(linha, "output") != NULL)
+			iOut[i++] = nextNumber(0, linha);
 	fclose(input);
 }
 
@@ -330,22 +341,6 @@ void GenVHDL(char *Blif_file, char *Vhdl_file)
 //*      Junta as partes VHDL	     */
 //*       em um único arquivo		 */
 //************************************/
-
-// Lê informações do arquivo kiss
-void parseKiss(FILE *input) 
-{
-	char linha[MAX];
-	do
-	{
-		fgets(linha , MAX , input);
-		if (strstr(linha, ".i") != NULL)
-			Ninput  = nextNumber(0,linha);
-		if (strstr(linha, ".o") != NULL)  
-			Noutput = nextNumber(0,linha);
-	} while (strstr(linha, ".p") == NULL);
-	Nstt = Nin - Ninput;
-	fclose(input);
-}
 
 void GenDLatchVHDLwithI(char *DLatch_file, int i)
 {
@@ -690,7 +685,7 @@ void constructOptimizedVHDL(FILE *output)
 	for (int i = 0; i < Nstt; i++)
 		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", iCode[i], i, i, i);
 	for (int i = 0; i < Noutput; i++)
-		fprintf(output, "  OUT%d: D_Latch0    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, i, i, i, i);
+		fprintf(output, "  OUT%d: D_Latch%d    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", iOut[i], i, i, i, i, i);
 	
 	/* Outputs do VHDL */
 	fprintf(output, "\n  -- Ordem dos outputs");
@@ -753,8 +748,10 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "\n     SSTATE <= \'");
 	for (int i = Nstate - 1; i >= 0; i--)
 		fprintf(output, "%d", iCode[i]);
-	fprintf(output, "\'\n");
-	fprintf(output, "    ELSIF (RISING_EDGE(CLOCK)) THEN\n");
+	fprintf(output, "\'\n    	-- Ordem dos outputs");
+	for (int i = Noutput - 1; i >= 0; i--)
+		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], i, iOut[i]);
+	fprintf(output, "\n    ELSIF (RISING_EDGE(CLOCK)) THEN\n");
 	fprintf(output, "    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
 	/* Outputs do VHDL */
 	fprintf(output, "\n    	-- Ordem dos outputs");
@@ -766,20 +763,23 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "END ALC_XMS;\n");
 }
 
-void assembleVHDL(char *Kiss_file, char *Code_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug)
+void assembleVHDL(char *XBM_file, char *Kiss_file, char *Code_file, char *Blif_file, char *Vhdl_file, bool sync, bool debug)
 {
 	FILE *BLIF_IN  = fopen (Blif_file, "r");
 	FILE *CODE_IN  = fopen (Code_file, "r");
 	FILE *KISS_IN  = fopen (Kiss_file, "r");
+	FILE *XBM_IN   = fopen (XBM_file, "r");
 	FILE *VHDL_OUT = fopen (Vhdl_file, "w");
 	
 	checkFile(BLIF_IN, Blif_file);
-	checkFile(CODE_IN, Kiss_file);
+	checkFile(CODE_IN, Code_file);
 	checkFile(KISS_IN, Kiss_file);
+	checkFile(XBM_IN,  XBM_file );
 	cropExtension(Vhdl_file);
 	parseBlif(BLIF_IN);
 	parseCode(CODE_IN);
 	parseKiss(KISS_IN);
+	parseXBM (XBM_IN );
 	
 	if (debug == true) {
 		if (sync == false) constructMasterVHDL(VHDL_OUT); 

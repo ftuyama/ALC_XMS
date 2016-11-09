@@ -18,7 +18,7 @@
 int Nminstates = 0, Ndependencias = 0;
 int Nprodutos = 0, Nliterais = 0;
 int Ninput, Noutput;
-char fileName[MAX], name[MAX], 
+char fileName[MAX], name[MAX], vhdlName[MAX],
 	original[MAX], command[MAX];
 bool showDG = false;
 bool useDDC = false; 
@@ -181,11 +181,17 @@ int main(int arc, char** argv)
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", name, false, debugMode);
+	strcpy(vhdlName, name);
+	getFileName(); 
+	fileNameDot("ALC_XMS/", ".nounc");
+	assembleVHDL(name, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, false, debugMode);
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");
-	assembleVHDL("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", name, true, debugMode);
+	strcpy(vhdlName, name);
+	getFileName(); 
+	fileNameDot("ALC_XMS/", ".nounc");
+	assembleVHDL(name, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, true, debugMode);
 	
 	getFileName(); 
 	fileNameDot("ALC_XMS/vhdl/", "_Block.vhdl");
