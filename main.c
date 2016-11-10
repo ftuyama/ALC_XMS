@@ -173,7 +173,7 @@ int main(int arc, char** argv)
 	//*****************************************/
 	// Conversão das Eq. Booleanas para VHDL
 	// Input: Eq. Booleanas @ Output: Códigos VHDL
-
+	
 	printf("%s$ Conversão para VHDL.%s\n", KYEL, KWHT);
 	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
 	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl");

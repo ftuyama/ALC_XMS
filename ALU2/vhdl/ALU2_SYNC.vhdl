@@ -20,7 +20,7 @@ COMPONENT ALU2_SYNC_Block IS
   );
 END COMPONENT;
 
-  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(4 DOWNTO 0);
+  SIGNAL INPUT  : STD_LOGIC_VECTOR(4 DOWNTO 0);
   SIGNAL SSTATE : STD_LOGIC_VECTOR(8 DOWNTO 0);
   SIGNAL SOUT   : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
@@ -32,7 +32,7 @@ BEGIN
  
   PROCESS(CLOCK, RESET)
   BEGIN
-    IF (RST = '0') THEN';
+    IF (RESET = '0') THEN
     	-- Ordem dos outputs
     	Prech <= '1';
     	LX <= '0';
@@ -41,7 +41,7 @@ BEGIN
     	EndP <= '0';
     	seldx <= '0';
     	selym2 <= '0';
-      SSTATE <= '010000000';
+      SSTATE <= "010000000";
 
     ELSIF (RISING_EDGE(CLOCK)) THEN
     	-- Ordem dos outputs

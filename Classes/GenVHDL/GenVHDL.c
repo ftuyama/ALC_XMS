@@ -602,8 +602,8 @@ void constructOptimizedVHDL(FILE *output)
 	for (int i = 0; i < Ninput; i++)
 		if (i == Ninput - 1) fprintf(output, "%s : in std_logic;\n", inputList[i]);
 		else fprintf(output, "%s, ", inputList[i]);
-	fprintf(output, "    STATE  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
-	fprintf(output, "    NSTATE : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n    ", (Nstt - 1));
+	fprintf(output, "    STATE  : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
+	fprintf(output, "    NSTATE : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n    ", (Nstt - 1));
 	for (int i = 0; i < Noutput; i++)
 		if (i == Noutput - 1) fprintf(output, "%s : out std_logic\n", outputList[i]);
 		else fprintf(output, "%s, ", outputList[i]);
@@ -658,7 +658,7 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 
-	fprintf(output, "  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "  SIGNAL INPUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
@@ -677,8 +677,8 @@ void constructOptimizedVHDL(FILE *output)
 	
 	/* States do VHDL */
 	fprintf(output, "  -- Lógica de estado\n");
-	fprintf(output, "  STATE <= SSTATE\n");
-	fprintf(output, "  SNSTATE <= SNSTATE\n\n");
+	fprintf(output, "  STATE <= SSTATE;\n");
+	fprintf(output, "  SNSTATE <= SNSTATE;\n\n");
 	
 	/* Linkando blocos */
 	fprintf(output, "  -- Blocos lógicos\n");
@@ -731,7 +731,7 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "  );\n");
 	fprintf(output, "END COMPONENT;\n\n");
 
-	fprintf(output, "  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
+	fprintf(output, "  SIGNAL INPUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Ninput - 1));
 	fprintf(output, "  SIGNAL SSTATE : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput + Nstt - 1));
 	
@@ -750,20 +750,20 @@ void constructOptimizedSyncVHDL(FILE *output)
 	fprintf(output, "  BEGIN\n");
 	
 	/* Sinal de RESET */
-	fprintf(output, "    IF (RST = '0') THEN");
+	fprintf(output, "    IF (RESET = '0') THEN");
 	
 	/* Outputs do VHDL */
-	fprintf(output, "\';\n    	-- Ordem dos outputs");
+	fprintf(output, "\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
 		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], iOut[Noutput - i - 1]);
 	
 	/* Estados do VHDL */
-	fprintf(output, "\n      SSTATE <= \'");
+	fprintf(output, "\n      SSTATE <= \"");
 	for (int i = Nstt - 1; i >= 0; i--)
 		fprintf(output, "%d", iCode[Nstt - i - 1]);
 		
 	/* Sinal de Clock */
-	fprintf(output, "\';\n\n    ELSIF (RISING_EDGE(CLOCK)) THEN");
+	fprintf(output, "\";\n\n    ELSIF (RISING_EDGE(CLOCK)) THEN");
 	
 	/* Outputs do VHDL */
 	fprintf(output, "\n    	-- Ordem dos outputs");
