@@ -1,8 +1,8 @@
-biu_fifo2dma
-Num_StateMin:3
-Num_Dependen:2
-Num_Produtos:21
-Num_Literais:42
-Num_Entradas:4
-Num_Saidas:2
+ALU2
+Num_StateMin:9
+Num_Dependen:64
+Num_Produtos:72
+Num_Literais:262
+Num_Entradas:5
+Num_Saidas:7
 ------------------

@@ -34,6 +34,23 @@ int nextNumber(int lin, char* aux)
 	aux2[d] = '\0';
 	return atoi(aux2);
 }
+// Lê o último número da String
+int lastNumber(int lin, char* aux)
+{
+	int num, c, d = 0;
+	char aux2[MAX] = "\0";
+	for(c=0; aux[c] != '\0'; c++)
+		// Append
+		if(aux[c]>47&&aux[c]<58)
+			aux2[d++] = aux[c];
+		// Drop
+		else if (d != 0){
+			aux2[d] = '\0';
+			num = atoi(aux2);
+			d = 0;
+		}
+	return num;
+}
 // Verifica se o char lido é nulo
 bool emptyChar(char c)
 {

@@ -72,19 +72,22 @@ BEGIN
   -- Ordem dos inputs
   INPUT <= cntgt1 & ok & fain & dackn;
 
+  -- Lógica de estado
   STATE <= SSTATE
   SNSTATE <= SNSTATE
 
+  -- Blocos lógicos
   DELAY: V_PULSE    PORT MAP(FGC, SFGC);
   B1: FGC_Block     PORT MAP(INPUT & SSTATE, FGC);
   B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);
   B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);
 
-  STT0: D_Latch0    PORT MAP(SFGC, SNSTATE(0), RESET, SSTATE(0));
-  STT0: D_Latch1    PORT MAP(SFGC, SNSTATE(1), RESET, SSTATE(1));
-  STT0: D_Latch2    PORT MAP(SFGC, SNSTATE(2), RESET, SSTATE(2));
+  -- Elementos de memória
+  STT0: D_Latch1    PORT MAP(SFGC, SNSTATE(0), RESET, SSTATE(0));
+  STT1: D_Latch0    PORT MAP(SFGC, SNSTATE(1), RESET, SSTATE(1));
+  STT2: D_Latch0    PORT MAP(SFGC, SNSTATE(2), RESET, SSTATE(2));
   OUT0: D_Latch0    PORT MAP(SSOUT(0) XOR SOUT(0), SOUT(0), RESET, SSOUT(0));
-  OUT0: D_Latch1    PORT MAP(SSOUT(1) XOR SOUT(1), SOUT(1), RESET, SSOUT(1));
+  OUT1: D_Latch0    PORT MAP(SSOUT(1) XOR SOUT(1), SOUT(1), RESET, SSOUT(1));
 
   -- Ordem dos outputs
   dreq <= SSOUT(1);

@@ -1,4 +1,4 @@
-*** Sinais para a MEFA ALU2.nounc ***
+*** Sinais para a MEFA ALC_XMS/ALU2.nounc ***
 
 Formato padrão para o arquivo blif:
 [Entradas de nível][Entradas normais][Sinais de estado]   [Sinais de estado][Sinais de saída]

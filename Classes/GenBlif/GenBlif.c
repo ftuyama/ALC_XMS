@@ -187,4 +187,5 @@ void GenBlif(char *Kiss_file, char *Blif_file, char *Log_file)
 	
 	fclose(KISS);
 	fclose(BLIF);
+	fclose(LOG);
 }

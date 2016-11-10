@@ -1,4 +1,4 @@
-ALU2_SYNC.nounc
+ALC_XMS/ALU2.nounc
 Num_StateMin:9
 Num_Dependen:64
 Num_Produtos:72

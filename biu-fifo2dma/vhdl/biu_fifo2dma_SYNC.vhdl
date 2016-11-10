@@ -32,21 +32,18 @@ BEGIN
  
   PROCESS(CLOCK, RESET)
   BEGIN
-    IF (RST = '0') THEN
+    IF (RST = '0') THEN';
+    	-- Ordem dos outputs
+    	dreq <= '0';
+    	frout <= '0';
+      SSTATE <= '001';
 
-    	-- Ordem dos outputs
-    	frout <= '0';
-    	dreq <= '0';
-     SSTATE <= '000'
-    	-- Ordem dos outputs
-    	dreq <= '0';
-    	frout <= '0';
     ELSIF (RISING_EDGE(CLOCK)) THEN
-    	SSTATE <= SOUT(4 DOWNTO 2);
-
     	-- Ordem dos outputs
     	dreq <= SOUT(1);
     	frout <= SOUT(0);
+    	SSTATE <= SOUT(4 DOWNTO 2);
+
     END IF;
   END PROCESS;
 END ALC_XMS;

@@ -151,13 +151,16 @@ void parseKiss(FILE *input)
 void parseCode(FILE *input) 
 {
 	char linha[MAX];
-	while(fgets(linha, MAX, input) != NULL)
+	while(fgets(linha, MAX, input) != NULL) {
 		if (strstr(linha, "# State") != NULL && iState == nextNumber(0, linha)) {
 			int j = 0, i = strlen(linha);
 			while (linha[--i] != ' ');
-			while (i < strlen(linha))
-				iCode[j++] = linha[i++]; 
+			i++;
+			while (i < strlen(linha)) 
+				iCode[j++] = linha[i++] - '0';
+			break;
 		}
+	}
 	fclose(input);
 }
 
@@ -166,9 +169,9 @@ void parseXBM(FILE *input)
 {
 	int i = 0;
 	char linha[MAX];
-	while(fgets(linha, MAX, input) != NULL && (linha[0]=='0' || linha[0]=='1'))
+	while(fgets(linha, MAX, input) != NULL)
 		if (strstr(linha, "output") != NULL)
-			iOut[i++] = nextNumber(0, linha);
+			iOut[i++] = lastNumber(0, linha);
 	fclose(input);
 }
 
@@ -508,6 +511,7 @@ void constructMasterVHDL(FILE *output)
 
 	for (int i = 0; i < Nstt; i++)
 		fprintf(output, "STT%d: D_Latch    PORT MAP(IN_DELAY OR RESET, SLSTATE(%d), SSTATE(%d));\n", i, i, i);
+	fprintf(output, "\n");
 	for (int i = 0; i < Noutput; i++)
 		fprintf(output, "OUT%d: D_Latch    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), SSOUT(%d));\n", i, i, i, i, i);
 	
@@ -672,20 +676,24 @@ void constructOptimizedVHDL(FILE *output)
 		else fprintf(output, "%s & ", inputList[i]);
 	
 	/* States do VHDL */
+	fprintf(output, "  -- Lógica de estado\n");
 	fprintf(output, "  STATE <= SSTATE\n");
 	fprintf(output, "  SNSTATE <= SNSTATE\n\n");
 	
 	/* Linkando blocos */
+	fprintf(output, "  -- Blocos lógicos\n");
 	fprintf(output, "  DELAY: V_PULSE    PORT MAP(FGC, SFGC);\n");
 	fprintf(output, "  B1: FGC_Block     PORT MAP(INPUT & SSTATE, FGC);\n");
 	fprintf(output, "  B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);\n");
 	fprintf(output, "  B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);\n\n");
 
 	/* Linkando Latches */
-	for (int i = 0; i < Nstt; i++)
-		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", iCode[i], i, i, i);
-	for (int i = 0; i < Noutput; i++)
-		fprintf(output, "  OUT%d: D_Latch%d    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", iOut[i], i, i, i, i, i);
+	fprintf(output, "  -- Elementos de memória\n");
+	for (int i = Nstt - 1; i >= 0; i--)
+		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, iCode[Nstt - i - 1], i, i);
+	fprintf(output, "\n");
+	for (int i = Noutput - 1; i >= 0; i--)
+		fprintf(output, "  OUT%d: D_Latch%d    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, iOut[Noutput - i - 1], i, i, i, i);
 	
 	/* Outputs do VHDL */
 	fprintf(output, "\n  -- Ordem dos outputs");
@@ -740,23 +748,31 @@ void constructOptimizedSyncVHDL(FILE *output)
 	
 	fprintf(output, " \n  PROCESS(CLOCK, RESET)\n");
 	fprintf(output, "  BEGIN\n");
-	fprintf(output, "    IF (RST = '0') THEN\n");
+	
+	/* Sinal de RESET */
+	fprintf(output, "    IF (RST = '0') THEN");
+	
 	/* Outputs do VHDL */
-	fprintf(output, "\n    	-- Ordem dos outputs");
+	fprintf(output, "\';\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n    	%s <= '0';", outputList[i]);
-	fprintf(output, "\n     SSTATE <= \'");
+		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], iOut[Noutput - i - 1]);
+	
+	/* Estados do VHDL */
+	fprintf(output, "\n      SSTATE <= \'");
 	for (int i = Nstt - 1; i >= 0; i--)
-		fprintf(output, "%d", iCode[i]);
-	fprintf(output, "\'\n    	-- Ordem dos outputs");
-	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], iOut[i]);
-	fprintf(output, "\n    ELSIF (RISING_EDGE(CLOCK)) THEN\n");
-	fprintf(output, "    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
+		fprintf(output, "%d", iCode[Nstt - i - 1]);
+		
+	/* Sinal de Clock */
+	fprintf(output, "\';\n\n    ELSIF (RISING_EDGE(CLOCK)) THEN");
+	
 	/* Outputs do VHDL */
 	fprintf(output, "\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
 		fprintf(output, "\n    	%s <= SOUT(%d);", outputList[Noutput - i - 1], i);
+	
+	/* Estados do VHDL */
+	fprintf(output, "\n    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
+		
 	fprintf(output, "\n    END IF;\n");
 	fprintf(output, "  END PROCESS;\n");
 	
@@ -777,9 +793,9 @@ void assembleVHDL(char *XBM_file, char *Kiss_file, char *Code_file, char *Blif_f
 	checkFile(XBM_IN,  XBM_file );
 	cropExtension(Vhdl_file);
 	parseBlif(BLIF_IN);
-	parseCode(CODE_IN);
 	parseKiss(KISS_IN);
 	parseXBM (XBM_IN );
+	parseCode(CODE_IN);
 	
 	if (debug == true) {
 		if (sync == false) constructMasterVHDL(VHDL_OUT); 

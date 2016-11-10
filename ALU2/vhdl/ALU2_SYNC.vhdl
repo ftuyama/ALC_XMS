@@ -32,28 +32,18 @@ BEGIN
  
   PROCESS(CLOCK, RESET)
   BEGIN
-    IF (RST = '0') THEN
+    IF (RST = '0') THEN';
+    	-- Ordem dos outputs
+    	Prech <= '1';
+    	LX <= '0';
+    	LY <= '0';
+    	A2M <= '0';
+    	EndP <= '0';
+    	seldx <= '0';
+    	selym2 <= '0';
+      SSTATE <= '010000000';
 
-    	-- Ordem dos outputs
-    	selym2 <= '0';
-    	seldx <= '0';
-    	EndP <= '0';
-    	A2M <= '0';
-    	LY <= '0';
-    	LX <= '0';
-    	Prech <= '0';
-     SSTATE <= '000000000'
-    	-- Ordem dos outputs
-    	Prech <= '0';
-    	LX <= '0';
-    	LY <= '0';
-    	A2M <= '0';
-    	EndP <= '0';
-    	seldx <= '0';
-    	selym2 <= '0';
     ELSIF (RISING_EDGE(CLOCK)) THEN
-    	SSTATE <= SOUT(15 DOWNTO 7);
-
     	-- Ordem dos outputs
     	Prech <= SOUT(6);
     	LX <= SOUT(5);
@@ -62,6 +52,8 @@ BEGIN
     	EndP <= SOUT(2);
     	seldx <= SOUT(1);
     	selym2 <= SOUT(0);
+    	SSTATE <= SOUT(15 DOWNTO 7);
+
     END IF;
   END PROCESS;
 END ALC_XMS;

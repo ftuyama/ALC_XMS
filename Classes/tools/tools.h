@@ -17,6 +17,7 @@ void writeLog (char *file, char *name, int Nminstates, int Ndependencias,
 				int Nprodutos, int Nliterais, int Ninput, int Noutput);
 void exception(int lin, char* aux);
 int nextNumber(int lin, char* aux);
+int lastNumber(int lin, char* aux);
 int not(int x);
 bool emptyChar(char c);
 bool opChar(char c);
