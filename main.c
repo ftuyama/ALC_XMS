@@ -176,9 +176,9 @@ int main(int arc, char** argv)
 	
 	printf("%s$ Conversão para VHDL.%s\n", KYEL, KWHT);
 	reportEquations("ALC_XMS/blif/arquivo_min.blif", "ALC_XMS/log/sinais.txt", "ALC_XMS/log/equations.txt");
-	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl");
-	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl");
-	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl");
+	GenVHDL("ALC_XMS/blif/FGC.blif"	 , "ALC_XMS/vhdl/FGC_Block.vhdl", true);
+	GenVHDL("ALC_XMS/blif/OUT.blif"	 , "ALC_XMS/vhdl/OUT_Block.vhdl", false);
+	GenVHDL("ALC_XMS/blif/NSTATE.blif", "ALC_XMS/vhdl/NSTATE_Block.vhdl", false);
 	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch0.vhdl", "ALC_XMS/vhdl/D_Latch1.vhdl", "ALC_XMS/vhdl/D_Latch.vhdl", debugMode);
 	GenVPulseVHDL("ALC_XMS/vhdl/V_Pulse.vhdl");
 	
@@ -190,7 +190,7 @@ int main(int arc, char** argv)
 	assembleVHDL(nouncName, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, true, debugMode);
 	
 	vhdlName = fileNameDot("ALC_XMS/vhdl/", fileName, "_Block.vhdl");
-	GenVHDL("ALC_XMS/blif/arquivo_min.blif", vhdlName);
+	GenVHDL("ALC_XMS/blif/arquivo_min.blif", vhdlName, false);
 
 	//*****************************************/
 	//*          Generate Log File            */

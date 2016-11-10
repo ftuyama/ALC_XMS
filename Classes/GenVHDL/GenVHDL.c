@@ -43,8 +43,14 @@ void constructVHDLBottom(FILE *output)
 	fprintf(output, "END version;\n");
 }
 
+bool isHigh(char *linha) {
+	int j = 0;
+	for (; linha[j]!=' '; j++);
+	return linha[j + 1] == '1';
+}
+
 // Constrói o núcleo VHDL
-void constructVHDL(FILE *input, FILE *output)
+void constructVHDL(FILE *input, FILE *output, bool high_only)
 {
 	int j;
 	char linha[MAX];
@@ -52,23 +58,26 @@ void constructVHDL(FILE *input, FILE *output)
 	if (strstr(linha, ".p") != NULL)
 		fgets(linha , MAX , input);
 	while (strstr(linha, ".e") == NULL) {
-		j = 0;
-		fprintf(output, "if std_match(INPUT, ");
-		for (int i = 0; i < strlen(linha); i++)
-			if (linha[i] == '~') linha[i] = '-';
-		fprintf(output, "\"%.*s\"", (int)(strchr(linha, ' ') - linha), linha);
-		for (; linha[j]!=' '; j++);
-		
-		fprintf(output, ") then OUTPUT <= ");
-		for (int i = 0; i < strlen(linha); i++)
-			if (linha[i] == '~') linha[i] = '-';
-		fprintf(output, "\"%.*s\";\n", (int)strlen(linha) - j - 2, linha + j + 1);
-		fprintf(output, "     els");
+		if (high_only == false || isHigh(linha) == true) {
+			j = 0;
+			fprintf(output, "if std_match(INPUT, ");
+			for (int i = 0; i < strlen(linha); i++)
+				if (linha[i] == '~') linha[i] = '-';
+			fprintf(output, "\"%.*s\"", (int)(strchr(linha, ' ') - linha), linha);
+			for (; linha[j]!=' '; j++);
+			
+			fprintf(output, ") then OUTPUT <= ");
+			for (int i = 0; i < strlen(linha); i++)
+				if (linha[i] == '~') linha[i] = '-';
+			fprintf(output, "\"%.*s\";\n", (int)strlen(linha) - j - 2, linha + j + 1);
+			fprintf(output, "     els");
+		}
 		fgets(linha , MAX , input);
 	}
 	fprintf(output, "e OUTPUT <= \"");
 	for (int i = 0; i < Nout; i++)
-		fprintf(output, "-");
+		if (high_only == true) fprintf(output, "0");
+		else fprintf(output, "-");
 	fprintf(output, "\";\n");
 	fclose(input);
 }
@@ -318,12 +327,12 @@ void cropExtension(char* name)
 	vhdlName[j] = '\0';
 }
 
-void castBlifToVHDL(FILE *input, FILE *output, char *Vhdl_file)
+void castBlifToVHDL(FILE *input, FILE *output, char *Vhdl_file, bool high_only)
 {
 	cropExtension(Vhdl_file);
 	parseBlif(input);
 	constructVHDLHeader(output);
-	constructVHDL(input, output);
+	constructVHDL(input, output, high_only);
 	constructVHDLBottom(output);
 }
 
@@ -331,13 +340,13 @@ void castBlifToVHDL(FILE *input, FILE *output, char *Vhdl_file)
 //*      Núcleo Gerador de VHDL	     */
 //*     					         */
 //************************************/
-void GenVHDL(char *Blif_file, char *Vhdl_file)
+void GenVHDL(char *Blif_file, char *Vhdl_file, bool high_only)
 {
 	FILE *input   = fopen (Blif_file, "r");
 	FILE *VHDL_OUT = fopen (Vhdl_file, "w");
 	
 	checkFile(input, Blif_file);
-	castBlifToVHDL(input, VHDL_OUT, Vhdl_file);
+	castBlifToVHDL(input, VHDL_OUT, Vhdl_file, high_only);
 }
 
 //************************************/
