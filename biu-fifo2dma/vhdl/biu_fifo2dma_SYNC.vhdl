@@ -36,12 +36,17 @@ BEGIN
 
     	-- Ordem dos outputs
     	frout <= '0';
-    	dreq <= '0';    ELSIF (RISING_EDGE(CLOCK)) THEN
+    	dreq <= '0';
+     SSTATE <= '000'
+    	-- Ordem dos outputs
+    	dreq <= '0';
+    	frout <= '0';
+    ELSIF (RISING_EDGE(CLOCK)) THEN
     	SSTATE <= SOUT(4 DOWNTO 2);
 
     	-- Ordem dos outputs
-    	frout <= SOUT(1);
-    	dreq <= SOUT(0);
+    	dreq <= SOUT(1);
+    	frout <= SOUT(0);
     END IF;
   END PROCESS;
 END ALC_XMS;

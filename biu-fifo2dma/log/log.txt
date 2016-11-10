@@ -1,4 +1,4 @@
-biu_fifo2dma_SYNC.nounc
+ALC_XMS/biu-fifo2dma.nounc
 Num_StateMin:3
 Num_Dependen:2
 Num_Produtos:21

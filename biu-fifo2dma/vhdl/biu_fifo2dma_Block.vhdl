@@ -2,14 +2,14 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.NUMERIC_STD.all;
 
-ENTITY biu_fifo2dma_SYNC_Block IS
+ENTITY biu_fifo2dma_Block IS
   PORT (
     INPUT : IN  STD_LOGIC_VECTOR(6 DOWNTO 0);
     OUTPUT: OUT STD_LOGIC_VECTOR(4 DOWNTO 0)
   );
-END biu_fifo2dma_SYNC_Block;
+END biu_fifo2dma_Block;
 
-ARCHITECTURE version OF biu_fifo2dma_SYNC_Block IS
+ARCHITECTURE version OF biu_fifo2dma_Block IS
 BEGIN
   PROCESS(INPUT)
   BEGIN

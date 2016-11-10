@@ -41,17 +41,27 @@ BEGIN
     	A2M <= '0';
     	LY <= '0';
     	LX <= '0';
-    	Prech <= '0';    ELSIF (RISING_EDGE(CLOCK)) THEN
+    	Prech <= '0';
+     SSTATE <= '000000000'
+    	-- Ordem dos outputs
+    	Prech <= '0';
+    	LX <= '0';
+    	LY <= '0';
+    	A2M <= '0';
+    	EndP <= '0';
+    	seldx <= '0';
+    	selym2 <= '0';
+    ELSIF (RISING_EDGE(CLOCK)) THEN
     	SSTATE <= SOUT(15 DOWNTO 7);
 
     	-- Ordem dos outputs
-    	selym2 <= SOUT(6);
-    	seldx <= SOUT(5);
-    	EndP <= SOUT(4);
+    	Prech <= SOUT(6);
+    	LX <= SOUT(5);
+    	LY <= SOUT(4);
     	A2M <= SOUT(3);
-    	LY <= SOUT(2);
-    	LX <= SOUT(1);
-    	Prech <= SOUT(0);
+    	EndP <= SOUT(2);
+    	seldx <= SOUT(1);
+    	selym2 <= SOUT(0);
     END IF;
   END PROCESS;
 END ALC_XMS;

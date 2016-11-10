@@ -1,4 +1,4 @@
-*** Sinais para a MEFA biu-fifo2dma.nounc ***
+*** Sinais para a MEFA ALC_XMS/biu-fifo2dma.nounc ***
 
 Formato padrão para o arquivo blif:
 [Entradas de nível][Entradas normais][Sinais de estado]   [Sinais de estado][Sinais de saída]

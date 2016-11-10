@@ -18,7 +18,8 @@
 int Nminstates = 0, Ndependencias = 0;
 int Nprodutos = 0, Nliterais = 0;
 int Ninput, Noutput;
-char fileName[MAX], name[MAX], vhdlName[MAX],
+char* nouncName, *vhdlName;
+char fileName[MAX], name[MAX],
 	original[MAX], command[MAX];
 bool showDG = false;
 bool useDDC = false; 
@@ -32,7 +33,6 @@ void getFilePath(char* name)
 	while(name[++i] != '.')
 		fileName[i] = name[i];
 	fileName[i] = '\0';
-	strcpy(original, fileName);
 }
 
 void getFileName()
@@ -41,17 +41,18 @@ void getFileName()
 	while(name[--i] != '/' && i !=0)
 		if (name[i] == '-')
 			name[i] = '_';
-	if (i == 0) i--;
-	while(name[i] != '.')
-		fileName[j++] = name[++i];
+	while(name[i] != '.' && i <= strlen(name))
+		fileName[j++] = name[i++];
 	fileName[--j] = '\0';
 }
 
-void fileNameDot(char* path, char* extension)
+char* fileNameDot(char* path, char *name, char* extension)
 {
-	strcpy(name, path);
-	strcat(name, fileName);
-	strcat(name, extension);
+	char* newName = (char*)malloc(MAX*sizeof(char));
+	strcpy(newName, path);
+	strcat(newName, name);
+	strcat(newName, extension);
+	return newName;
 }
 
 int main(int arc, char** argv)
@@ -71,10 +72,12 @@ int main(int arc, char** argv)
 	//********************************************/
 
 	if (arc > 1) getFilePath(argv[1]);
-	else getFilePath("ALU2.nounc");
+	else getFilePath("biu-fifo2dma.nounc");
 	if (arc > 2 && argv[2][0] == '1') useDDC = true;
 	if (arc > 3 && argv[3][0] == '1') showDG = true;
 	if (arc > 4 && argv[3][0] == '1') sincAnalysis = true;
+	strcpy(original, fileName);
+	strcpy(name, fileName);
 	
 	printf ("%sFileName[%s]%s\n", KRED, fileName, KYEL);
 	system ("mkdir -p ALC_XMS");
@@ -91,9 +94,9 @@ int main(int arc, char** argv)
 	// Realiza a conversão da especificação
 	// Input: Nounc @ Output: Kiss2
 	
+	nouncName = fileNameDot("ALC_XMS/", fileName, ".nounc");
 	printf("%s$ Conversão XBM - KISS2.%s\n", KYEL, KWHT);
-	fileNameDot("", ".nounc");
-	GenKiss2(name, "ALC_XMS/kiss2/arquivo.kiss2", "ALC_XMS/log/sinais.txt", useDDC);
+	GenKiss2(nouncName, "ALC_XMS/kiss2/arquivo.kiss2", "ALC_XMS/log/sinais.txt", useDDC);
 	
 	//*****************************************/
 	//*        Minimização de estados         */	
@@ -179,33 +182,23 @@ int main(int arc, char** argv)
 	GenDLatchVHDL("ALC_XMS/vhdl/D_Latch0.vhdl", "ALC_XMS/vhdl/D_Latch1.vhdl", "ALC_XMS/vhdl/D_Latch.vhdl", debugMode);
 	GenVPulseVHDL("ALC_XMS/vhdl/V_Pulse.vhdl");
 	
-	getFileName(); 
-	fileNameDot("ALC_XMS/vhdl/", ".vhdl");
-	strcpy(vhdlName, name);
-	getFileName(); 
-	fileNameDot("ALC_XMS/", ".nounc");
-	assembleVHDL(name, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, false, debugMode);
+	getFileName();
+	vhdlName = fileNameDot("ALC_XMS/vhdl/", fileName, ".vhdl");
+	assembleVHDL(nouncName, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, false, debugMode);
 	
-	getFileName(); 
-	fileNameDot("ALC_XMS/vhdl/", "_SYNC.vhdl");
-	strcpy(vhdlName, name);
-	getFileName(); 
-	fileNameDot("ALC_XMS/", ".nounc");
-	assembleVHDL(name, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, true, debugMode);
+	vhdlName = fileNameDot("ALC_XMS/vhdl/", fileName, "_SYNC.vhdl");
+	assembleVHDL(nouncName, "ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/cod_states.txt", "ALC_XMS/blif/arquivo.blif", vhdlName, true, debugMode);
 	
-	getFileName(); 
-	fileNameDot("ALC_XMS/vhdl/", "_Block.vhdl");
-	GenVHDL("ALC_XMS/blif/arquivo_min.blif", name);
+	vhdlName = fileNameDot("ALC_XMS/vhdl/", fileName, "_Block.vhdl");
+	GenVHDL("ALC_XMS/blif/arquivo_min.blif", vhdlName);
 
 	//*****************************************/
 	//*          Generate Log File            */
 	//*****************************************/
 	// Cria um arquivo Log com os resultados obtidos
-	fileNameDot("", ".nounc");
-	writeLog("ALC_XMS/log/log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
+	writeLog("ALC_XMS/log/log.txt", nouncName, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	writeLog("log.txt", name, Nminstates, Ndependencias, Nprodutos, Nliterais, Ninput, Noutput);
 	
-	getFileName();
 	sprintf(command, "rm -rf %s", original);
 	system (command);
 	sprintf(command, "mv ALC_XMS/ %s", original);

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "../tools/tools.h"
 
-char vhdlName[MAX], iCod[MAX];
+char vhdlName[MAX], iCode[MAX];
 int Nin, Nout, iState, iOut[MAX];
 int Ninput, Noutput, Nstt;
 /* Auxilliary variables */
@@ -151,12 +151,12 @@ void parseKiss(FILE *input)
 void parseCode(FILE *input) 
 {
 	char linha[MAX];
-	while(fgets(input, MAX, linha) != NULL)
+	while(fgets(linha, MAX, input) != NULL)
 		if (strstr(linha, "# State") != NULL && iState == nextNumber(0, linha)) {
 			int j = 0, i = strlen(linha);
 			while (linha[--i] != ' ');
 			while (i < strlen(linha))
-				iCod[j++] = linha[i++]; 
+				iCode[j++] = linha[i++]; 
 		}
 	fclose(input);
 }
@@ -166,7 +166,7 @@ void parseXBM(FILE *input)
 {
 	int i = 0;
 	char linha[MAX];
-	while(fgets(input, MAX, linha) != NULL && (linha[0]=='0' || linha[0]=='1'))
+	while(fgets(linha, MAX, input) != NULL && (linha[0]=='0' || linha[0]=='1'))
 		if (strstr(linha, "output") != NULL)
 			iOut[i++] = nextNumber(0, linha);
 	fclose(input);
@@ -373,14 +373,14 @@ void GenDLatchVHDLNeutral(char *DLatch_file)
 	FILE *output  = fopen (DLatch_file, "w");
 	fprintf(output, "library IEEE;\n");
 	fprintf(output, "use IEEE.STD_LOGIC_1164.ALL;\n\n");
-	fprintf(output, "entity D_Latch%d is\n", i);
+	fprintf(output, "entity D_Latch is\n");
 	fprintf(output, "  Port (\n");
 	fprintf(output, "    EN : in  STD_LOGIC;\n");
 	fprintf(output, "    D  : in  STD_LOGIC;\n");
 	fprintf(output, "    Q  : out STD_LOGIC\n");
 	fprintf(output, "  );\n");
-	fprintf(output, "end D_Latch%d;\n\n", i);
-	fprintf(output, "architecture Behavioral of D_Latch%d is\n\n", i);
+	fprintf(output, "end D_Latch;\n\n");
+	fprintf(output, "architecture Behavioral of D_Latch is\n\n");
 	fprintf(output, "begin\n");
 	fprintf(output, "process(EN, D)\n");
 	fprintf(output, "begin\n");
@@ -746,11 +746,11 @@ void constructOptimizedSyncVHDL(FILE *output)
 	for (int i = Noutput - 1; i >= 0; i--)
 		fprintf(output, "\n    	%s <= '0';", outputList[i]);
 	fprintf(output, "\n     SSTATE <= \'");
-	for (int i = Nstate - 1; i >= 0; i--)
+	for (int i = Nstt - 1; i >= 0; i--)
 		fprintf(output, "%d", iCode[i]);
 	fprintf(output, "\'\n    	-- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], i, iOut[i]);
+		fprintf(output, "\n    	%s <= \'%d\';", outputList[Noutput - i - 1], iOut[i]);
 	fprintf(output, "\n    ELSIF (RISING_EDGE(CLOCK)) THEN\n");
 	fprintf(output, "    	SSTATE <= SOUT(%d DOWNTO %d);\n", (Noutput + Nstt - 1), (Noutput));
 	/* Outputs do VHDL */
