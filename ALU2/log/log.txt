@@ -1,8 +1,0 @@
-ALC_XMS/ALU2.nounc
-Num_StateMin:9
-Num_Dependen:64
-Num_Produtos:72
-Num_Literais:262
-Num_Entradas:5
-Num_Saidas:7
-------------------

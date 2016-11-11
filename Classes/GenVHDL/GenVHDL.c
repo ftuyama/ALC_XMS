@@ -613,6 +613,7 @@ void constructOptimizedVHDL(FILE *output)
 		else fprintf(output, "%s, ", inputList[i]);
 	fprintf(output, "    STATE  : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "    NSTATE : OUT STD_LOGIC_VECTOR(%d DOWNTO 0);\n    ", (Nstt - 1));
+	fprintf(output, "    FGC    : OUT STD_LOGIC;\n");
 	for (int i = 0; i < Noutput; i++)
 		if (i == Noutput - 1) fprintf(output, "%s : out std_logic\n", outputList[i]);
 		else fprintf(output, "%s, ", outputList[i]);
@@ -672,8 +673,8 @@ void constructOptimizedVHDL(FILE *output)
 	fprintf(output, "  SIGNAL SNSTATE: STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Nstt - 1));
 	fprintf(output, "  SIGNAL SSOUT  : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
 	fprintf(output, "  SIGNAL SOUT   : STD_LOGIC_VECTOR(%d DOWNTO 0);\n", (Noutput - 1));
+	fprintf(output, "  SIGNAL DFGC   : STD_LOGIC;\n");
 	fprintf(output, "  SIGNAL SFGC   : STD_LOGIC;\n");
-	fprintf(output, "  SIGNAL FGC    : STD_LOGIC;\n");
 	
 	fprintf(output, "BEGIN\n\n");
 	
@@ -691,15 +692,15 @@ void constructOptimizedVHDL(FILE *output)
 	
 	/* Linkando blocos */
 	fprintf(output, "  -- Blocos lógicos\n");
-	fprintf(output, "  DELAY: V_PULSE    PORT MAP(FGC, SFGC);\n");
-	fprintf(output, "  B1: FGC_Block     PORT MAP(INPUT & SSTATE, FGC);\n");
+	fprintf(output, "  DELAY: V_PULSE    PORT MAP(SFGC, DFGC);\n");
+	fprintf(output, "  B1: FGC_Block     PORT MAP(INPUT & SSTATE, SFGC);\n");
 	fprintf(output, "  B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);\n");
 	fprintf(output, "  B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);\n\n");
 
 	/* Linkando Latches */
 	fprintf(output, "  -- Elementos de memória\n");
 	for (int i = Nstt - 1; i >= 0; i--)
-		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(SFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, iCode[Nstt - i - 1], i, i);
+		fprintf(output, "  STT%d: D_Latch%d    PORT MAP(DFGC, SNSTATE(%d), RESET, SSTATE(%d));\n", i, iCode[Nstt - i - 1], i, i);
 	fprintf(output, "\n");
 	for (int i = Noutput - 1; i >= 0; i--)
 		fprintf(output, "  OUT%d: D_Latch%d    PORT MAP(SSOUT(%d) XOR SOUT(%d), SOUT(%d), RESET, SSOUT(%d));\n", i, iOut[Noutput - i - 1], i, i, i, i);
