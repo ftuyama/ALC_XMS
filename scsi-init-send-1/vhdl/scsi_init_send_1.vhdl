@@ -4,8 +4,11 @@ use IEEE.NUMERIC_STD.all;
 
 ENTITY scsi_init_send_1 IS
   PORT (
-    INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
-    OUTPUT : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+    RESET  : IN  STD_LOGIC;
+    cntgt1, ok, rin, fain : in std_logic;
+    STATE  : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+    NSTATE : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+    aout, frout : out std_logic
   );
 END ENTITY scsi_init_send_1;
 
@@ -32,31 +35,62 @@ COMPONENT OUT_Block IS
   );
 END COMPONENT;
 
-COMPONENT D_Latch IS
+COMPONENT D_Latch0 IS
   Port (
     EN : in  STD_LOGIC;
     D  : in  STD_LOGIC;
+    rst: in  STD_LOGIC;
     Q  : out STD_LOGIC
   );
 END COMPONENT;
 
+COMPONENT D_Latch1 IS
+  Port (
+    EN : in  STD_LOGIC;
+    D  : in  STD_LOGIC;
+    rst: in  STD_LOGIC;
+    Q  : out STD_LOGIC
+  );
+END COMPONENT;
+
+COMPONENT V_Pulse IS
+  Port (
+    i  : in  STD_LOGIC;
+    o  : out STD_LOGIC
+  );
+END COMPONENT;
+
+  SIGNAL INPUT  : STD_LOGIC_VECTOR(3 DOWNTO 0);
   SIGNAL SSTATE : STD_LOGIC_VECTOR(1 DOWNTO 0);
   SIGNAL SNSTATE: STD_LOGIC_VECTOR(1 DOWNTO 0);
   SIGNAL SSOUT  : STD_LOGIC_VECTOR(1 DOWNTO 0);
   SIGNAL SOUT   : STD_LOGIC_VECTOR(1 DOWNTO 0);
-  SIGNAL FGC    : STD_LOGIC_VECTOR(0 DOWNTO 0);
-
+  SIGNAL SFGC   : STD_LOGIC;
+  SIGNAL FGC    : STD_LOGIC;
 BEGIN
-B1: FGC_Block    PORT MAP(INPUT & SSTATE, FGC(0));
-B2: NSTATE_Block PORT MAP(INPUT & SSTATE, SNSTATE);
-B3: OUT_Block    PORT MAP(INPUT & SSTATE, SOUT);
-STT0: D_Latch    PORT MAP(FGC(0), SNSTATE(0), SSTATE(0));
-STT1: D_Latch    PORT MAP(FGC(0), SNSTATE(1), SSTATE(1));
-OUT0: D_Latch    PORT MAP(SSOUT(0) XOR SOUT(0), SOUT(0), SSOUT(0));
-OUT1: D_Latch    PORT MAP(SSOUT(1) XOR SOUT(1), SOUT(1), SSOUT(1));
- 
-  PROCESS(INPUT)
-  BEGIN
-    OUTPUT <= SSOUT;
-  END PROCESS;
+
+  -- Ordem dos inputs
+  INPUT <= cntgt1 & ok & rin & fain;
+
+  -- Lógica de estado
+  STATE <= SSTATE;
+  SNSTATE <= SNSTATE;
+
+  -- Blocos lógicos
+  DELAY: V_PULSE    PORT MAP(FGC, SFGC);
+  B1: FGC_Block     PORT MAP(INPUT & SSTATE, FGC);
+  B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);
+  B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);
+
+  -- Elementos de memória
+  STT1: D_Latch0    PORT MAP(SFGC, SNSTATE(1), RESET, SSTATE(1));
+  STT0: D_Latch1    PORT MAP(SFGC, SNSTATE(0), RESET, SSTATE(0));
+
+  OUT1: D_Latch0    PORT MAP(SSOUT(1) XOR SOUT(1), SOUT(1), RESET, SSOUT(1));
+  OUT0: D_Latch0    PORT MAP(SSOUT(0) XOR SOUT(0), SOUT(0), RESET, SSOUT(0));
+
+  -- Ordem dos outputs
+  aout <= SSOUT(1);
+  frout <= SSOUT(0);
+
 END ALC_XMS;

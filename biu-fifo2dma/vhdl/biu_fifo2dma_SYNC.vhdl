@@ -20,7 +20,7 @@ COMPONENT biu_fifo2dma_SYNC_Block IS
   );
 END COMPONENT;
 
-  SIGNAL INPUT  : IN  STD_LOGIC_VECTOR(3 DOWNTO 0);
+  SIGNAL INPUT  : STD_LOGIC_VECTOR(3 DOWNTO 0);
   SIGNAL SSTATE : STD_LOGIC_VECTOR(2 DOWNTO 0);
   SIGNAL SOUT   : STD_LOGIC_VECTOR(4 DOWNTO 0);
 
@@ -32,11 +32,11 @@ BEGIN
  
   PROCESS(CLOCK, RESET)
   BEGIN
-    IF (RST = '0') THEN';
+    IF (RESET = '0') THEN
     	-- Ordem dos outputs
     	dreq <= '0';
     	frout <= '0';
-      SSTATE <= '001';
+      SSTATE <= "100";
 
     ELSIF (RISING_EDGE(CLOCK)) THEN
     	-- Ordem dos outputs

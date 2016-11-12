@@ -14,18 +14,11 @@ BEGIN
   PROCESS(INPUT)
   BEGIN
      if std_match(INPUT, "-00011") then OUTPUT <= "1";
-     elsif std_match(INPUT, "-00001") then OUTPUT <= "0";
-     elsif std_match(INPUT, "-10011") then OUTPUT <= "0";
-     elsif std_match(INPUT, "-10001") then OUTPUT <= "0";
-     elsif std_match(INPUT, "-10111") then OUTPUT <= "0";
      elsif std_match(INPUT, "-10101") then OUTPUT <= "1";
      elsif std_match(INPUT, "-11011") then OUTPUT <= "1";
-     elsif std_match(INPUT, "-11111") then OUTPUT <= "0";
      elsif std_match(INPUT, "110010") then OUTPUT <= "1";
      elsif std_match(INPUT, "010010") then OUTPUT <= "1";
-     elsif std_match(INPUT, "-11010") then OUTPUT <= "0";
-     elsif std_match(INPUT, "----00") then OUTPUT <= "-";
-     else OUTPUT <= "-";
+     else OUTPUT <= "0";
     END if;
 
   END PROCESS;

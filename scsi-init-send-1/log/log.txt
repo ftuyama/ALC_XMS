@@ -1,4 +1,4 @@
-scsi_init_send_1_SYNC.nounc
+ALC_XMS/scsi-init-send-1.nounc
 Num_StateMin:3
 Num_Dependen:0
 Num_Produtos:18

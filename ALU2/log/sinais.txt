@@ -1,0 +1,14 @@
+*** Sinais para a MEFA ALC_XMS/ALU2.nounc ***
+
+Formato padrão para o arquivo blif:
+[Entradas de nível][Entradas normais][Sinais de estado]   [Sinais de estado][Sinais de saída]
+
+
+Para a MEFA:
+
+C start EvDone M1A M2A2 [Sinais de Entrada]     [Sinais de Entrada] Prech LX LY A2M EndP seldx selym2 
+
+
+#
+C start EvDone M1A M2A2 
+Prech LX LY A2M EndP seldx selym2 
