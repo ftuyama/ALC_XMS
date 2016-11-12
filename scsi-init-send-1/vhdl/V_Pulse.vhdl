@@ -6,7 +6,7 @@ entity V_Pulse is
     i : in  STD_LOGIC;
     o : out STD_LOGIC
   );
-end V_Pulse;
+end entity V_Pulse;
 
 architecture Behavioral of V_Pulse is
 
@@ -41,4 +41,4 @@ end process;
 s5 <= not(s4);
 o <= s4;
 
-end Behavioral;
+end architecture Behavioral;

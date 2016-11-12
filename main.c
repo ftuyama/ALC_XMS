@@ -118,7 +118,7 @@ int main(int arc, char** argv)
 	// Faz análise do Grafo de Dependências
 	
 	printf("%s$ Análise do Grafo de Dependência.%s\n", KYEL, KWHT);
-	analyzeGD("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/DG.txt", showDG, &Ndependencias);
+	analyzeGD("ALC_XMS/kiss2/arquivo_min.kiss2", "ALC_XMS/log/DG.dot", showDG, &Ndependencias);
 	printf("> Dependências detectadas: %d\n", Ndependencias);
 	printf(KMAG);
 	

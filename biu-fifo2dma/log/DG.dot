@@ -1,0 +1,10 @@
+/*** Dependency Graph (DG) ***/
+
+//Visual Graph on GraphViz: http://graphs.grevian.org/graph
+
+digraph {
+S1->S0 [ label = "2" ];
+S2->S0 [ label = "1" ];
+S0->S1;
+S0->S2;
+}

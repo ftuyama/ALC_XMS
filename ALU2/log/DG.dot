@@ -1,0 +1,25 @@
+/*** Dependency Graph (DG) ***/
+
+//Visual Graph on GraphViz: http://graphs.grevian.org/graph
+
+digraph {
+S5->S0 [ label = "2" ];
+S2->S6 [ label = "5" ];
+S6->S0 [ label = "5, 1, 2, 3, 4" ];
+S5->S7 [ label = "6, 1, 2, 3, 4" ];
+S1->S8 [ label = "6, 5, 2, 3, 4" ];
+S2->S8 [ label = "6, 5, 1, 3, 4" ];
+S3->S8 [ label = "6, 5, 1, 2, 4" ];
+S4->S8 [ label = "6, 5, 1, 2, 3" ];
+S2->S1 [ label = "3, 4, 0" ];
+S3->S1 [ label = "2, 4, 0" ];
+S4->S1 [ label = "2, 3, 0" ];
+S0->S5 [ label = "2, 3, 4, 1" ];
+S0->S1 [ label = "2, 3, 4" ];
+S8->S1 [ label = "7" ];
+S7->S3 [ label = "8" ];
+S3->S2 [ label = "4" ];
+S4->S2 [ label = "3" ];
+S5->S4 [ label = "2" ];
+S1->S5 [ label = "0" ];
+}

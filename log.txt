@@ -1,8 +1,8 @@
-scsi_init_send_1
-Num_StateMin:3
-Num_Dependen:0
-Num_Produtos:18
-Num_Literais:27
-Num_Entradas:4
-Num_Saidas:2
+ALU2
+Num_StateMin:9
+Num_Dependen:64
+Num_Produtos:72
+Num_Literais:262
+Num_Entradas:5
+Num_Saidas:7
 ------------------

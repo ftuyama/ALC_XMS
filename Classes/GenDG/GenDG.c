@@ -14,6 +14,7 @@ typedef struct inl {
 Inl **sttData;
 typedef struct aresta {
 	int orig, dest, depe;
+	bool vis;
 	struct aresta *prox;
 } Aresta;
 Aresta *arestas;
@@ -55,12 +56,12 @@ void printTransition(FILE *log, int orig, int dest, bool show)
 			ar->prox = newAresta;
 			break;
 		}
-	fprintf(log, "%d->%d\n", orig, dest);
+	fprintf(log, "S%d->S%d;\n", orig, dest);
 	if (show == true)
-		printf("%d->%d\n", orig, dest); 
+		printf("S%d->S%d;\n", orig, dest); 
 }
 // Imprime uma nova dependência, se não for repetida
-void printDependencia(FILE *log, int orig, int dest, int depe, bool show)
+void appendDependencia(FILE *log, int orig, int dest, int depe, bool show)
 {
 	for (Aresta *ar = arestas->prox; ar != NULL; ar = ar->prox)
 		if (ar->orig == orig && ar->dest == dest && ar->depe == depe)
@@ -68,16 +69,28 @@ void printDependencia(FILE *log, int orig, int dest, int depe, bool show)
 			
 	Aresta *newAresta = (Aresta*)malloc(Nstate*sizeof(Aresta));
 	newAresta->orig = orig;	newAresta->dest = dest;
-	newAresta->depe = depe;	newAresta->prox = NULL;
+	newAresta->depe = depe;	newAresta->prox = NULL; newAresta->vis = false;
 	for (Aresta *ar = arestas; ar != NULL; ar = ar->prox)
 		if (ar->prox == NULL) {
 			ar->prox = newAresta;
 			break;
 		}
-		  
-	fprintf(log, "%d->%d [ label = \"%d\" ];\n", orig, dest, depe); 
 	if (show == true)
-		printf("%s%d->%d [ label = \"%d\" ];%s\n", KRED, orig, dest, depe, KWHT); 
+		printf("%sS%d->S%d [ label = \"%d\" ];%s\n", KRED, orig, dest, depe, KWHT); 
+}
+void printDependencias(FILE *log) {
+	for (Aresta *ar = arestas; ar != NULL; ar = ar->prox) {
+		if (ar->vis == false && ar->orig != ar->dest) {
+			fprintf(log, "S%d->S%d [ label = \"%d", ar->orig, ar->dest, ar->depe);
+			ar->vis = true;	
+			for (Aresta *as = ar->prox; as != NULL; as = as->prox)
+				if (ar->orig == as->orig && ar->dest == as->dest) {
+					fprintf(log, ", %d", as->depe);	
+					as->vis = true;
+				}
+			fprintf(log, "\" ];\n");	
+		}
+	}
 }
 //************************************/
 //*        Análise do Grafo          */
@@ -94,8 +107,8 @@ void showTransitions(FILE *log, bool show)
 void Dependencia(FILE *log, int origA, int destA, int origB, int destB, bool show)
 {
 	Ndependencias++;
-	printDependencia(log, origA, destA, origB, show);
-	printDependencia(log, origB, destB, origA, show);
+	appendDependencia(log, origA, destA, origB, show);
+	appendDependencia(log, origB, destB, origA, show);
 }
 // Para cada transição do DG, procura dependência
 int countDependency(FILE *log, bool show)
@@ -111,6 +124,7 @@ int countDependency(FILE *log, bool show)
 						if (pty != ptx)
 							Dependencia(log, ptx->Norig, j, pty->Norig, k, show);
 		}
+	printDependencias(log);
 	return Ndependencias;
 }
 //************************************/
@@ -323,8 +337,8 @@ void analyzeGD(char *Kiss_file, char *Log_file, bool show, int *Ndependencias)
 {
 	FILE *input = fopen (Kiss_file, "r");
 	FILE *log = fopen (Log_file, "w");
-	fprintf(log, "*** Dependency Graph (DG) ***\n\n");
-	fprintf(log, "Visual Graph on GraphViz: http://graphs.grevian.org/graph\n\n");
+	fprintf(log, "/*** Dependency Graph (DG) ***/\n\n");
+	fprintf(log, "//Visual Graph on GraphViz: http://graphs.grevian.org/graph\n\n");
 	fprintf(log, "digraph {\n");
 	if (show == true) printf("digraph {\n");
 	checkFile(input, Kiss_file);
