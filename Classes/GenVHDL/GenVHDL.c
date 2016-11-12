@@ -688,7 +688,8 @@ void constructOptimizedVHDL(FILE *output)
 	/* States do VHDL */
 	fprintf(output, "  -- Lógica de estado\n");
 	fprintf(output, "  STATE <= SSTATE;\n");
-	fprintf(output, "  SNSTATE <= SNSTATE;\n\n");
+	fprintf(output, "  NSTATE <= SNSTATE;\n");
+	fprintf(output, "  FGC <= DFGC;\n\n");
 	
 	/* Linkando blocos */
 	fprintf(output, "  -- Blocos lógicos\n");
