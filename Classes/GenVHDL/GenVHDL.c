@@ -422,7 +422,7 @@ void GenVPulseVHDL(char *VPulse_file)
 	fprintf(output, "    i : in  STD_LOGIC;\n");
 	fprintf(output, "    o : out STD_LOGIC\n");
 	fprintf(output, "  );\n");
-	fprintf(output, "end V_Pulse;\n\n");
+	fprintf(output, "end entity V_Pulse;\n\n");
 	fprintf(output, "architecture Behavioral of V_Pulse is\n\n");
 	fprintf(output, "signal s0,s1,s2,s4,s5: std_logic;\n\n");
 	
@@ -454,7 +454,7 @@ void GenVPulseVHDL(char *VPulse_file)
 	
 	fprintf(output, "s5 <= not(s4);\n");
 	fprintf(output, "o <= s4;\n\n");
-	fprintf(output, "end Behavioral;\n");
+	fprintf(output, "end architecture Behavioral;\n");
 }
 
 void constructMasterVHDL(FILE *output)
@@ -693,7 +693,7 @@ void constructOptimizedVHDL(FILE *output)
 	
 	/* Linkando blocos */
 	fprintf(output, "  -- Blocos lógicos\n");
-	fprintf(output, "  DELAY: V_PULSE    PORT MAP(SFGC, DFGC);\n");
+	fprintf(output, "  DELAY: V_Pulse    PORT MAP(SFGC, DFGC);\n");
 	fprintf(output, "  B1: FGC_Block     PORT MAP(INPUT & SSTATE, SFGC);\n");
 	fprintf(output, "  B2: NSTATE_Block  PORT MAP(INPUT & SSTATE, SNSTATE);\n");
 	fprintf(output, "  B3: OUT_Block     PORT MAP(INPUT & SSTATE, SOUT);\n\n");
@@ -709,7 +709,7 @@ void constructOptimizedVHDL(FILE *output)
 	/* Outputs do VHDL */
 	fprintf(output, "\n  -- Ordem dos outputs");
 	for (int i = Noutput - 1; i >= 0; i--)
-		fprintf(output, "\n  %s <= SSOUT(%d);", outputList[Noutput - i - 1], i);
+		fprintf(output, "\n  %8s <= SSOUT(%d);", outputList[Noutput - i - 1], i);
 
 	fprintf(output, "\n\nEND ALC_XMS;\n");
 }
